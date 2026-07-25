@@ -1,8 +1,8 @@
 # Raspberry Pi–FPGA Robot Supervisor
 
-This repository is the engineering workspace for an MEng capstone project that
-implements and evaluates an observer-based, fixed-point state-space controller
-for an encoder-equipped robotic drive.
+This repository is the engineering workspace for an independent capstone-style
+portfolio project implementing and evaluating an observer-based, fixed-point
+state-space controller for an encoder-equipped robotic drive.
 
 The target platform combines:
 
