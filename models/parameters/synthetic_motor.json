@@ -1,0 +1,14 @@
+{
+  "parameter_set_id": "SYNTHETIC-DCM-001",
+  "status": "synthetic_software_fixture",
+  "provenance": "Illustrative values for software verification only. These are not measurements or specifications for the final project motor.",
+  "sample_period_s": 0.001,
+  "parameters": {
+    "armature_resistance_ohm": 1.0,
+    "armature_inductance_h": 0.5,
+    "torque_constant_nm_per_a": 0.01,
+    "back_emf_constant_v_per_rad_s": 0.01,
+    "rotor_inertia_kg_m2": 0.01,
+    "viscous_friction_nm_s_per_rad": 0.1
+  }
+}

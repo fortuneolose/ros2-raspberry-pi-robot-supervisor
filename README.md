@@ -60,6 +60,24 @@ data/           Raw captures and processed experimental results
 .github/        Continuous-integration workflows
 ```
 
+## First executable non-hardware milestone
+
+The repository now includes a parameterized floating-point DC motor model and
+automated structural tests. The included `SYNTHETIC-DCM-001` values are a
+software fixture, not measurements or specifications for the final motor.
+
+Reproduce the current development evidence:
+
+```bash
+python -m unittest discover -s tests -p "test_*.py" -v
+MPLCONFIGDIR=.matplotlib python -m models.validate_model
+```
+
+The checks exercise model construction, units, 1 ms zero-order-hold
+discretisation, voltage-input controllability, encoder-position observability,
+zero-input equilibrium, and a finite 1 V open-loop development response. See
+[the model baseline](docs/model_baseline.md) for assumptions and limitations.
+
 ## Development sequence
 
 1. Freeze scope, select the motor/driver, and review the safety concept.
