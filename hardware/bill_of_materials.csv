@@ -1,0 +1,17 @@
+item,quantity,category,purpose_or_selection_rule,manufacturer_part_number,status
+Raspberry Pi 5,1,computing,ROS 2 supervision logging and software benchmark,TBD,TBD
+Raspberry Pi active cooling,1,thermal,Maintain processor performance under sustained load,TBD,TBD
+Raspberry Pi regulated 5 V 5 A supply,1,power,Independent rated Pi supply,TBD,TBD
+Digilent Basys 3,1,computing,Artix-7 FPGA real-time controller and interfaces,410-183,Proposed
+Encoder-equipped DC gearmotor,1,plant,Core plant; select voltage speed torque encoder and stall current,TBD,TBD
+Rated H-bridge motor driver,1,power electronics,Hardware enable and current margin above motor stall current,TBD,TBD
+Current-limited motor supply,1,power,Safe commissioning and disturbance tests,TBD,TBD
+Emergency-stop switch,1,safety,Reachable independent actuator shutdown,TBD,TBD
+Motor power fuse and holder,1,safety,Protect wiring and power stage using engineered rating,TBD,TBD
+Interface PCB,1,interconnect,Protected keyed Pi FPGA encoder and motor-driver interface,Custom,TBD
+Pi/Pmod/encoder/driver connectors and cables,1 set,interconnect,Reliable keyed and labelled removable wiring,TBD,TBD
+Series resistors and safe-state pull resistors,1 set,protection,Limit contention and define reset defaults,TBD,TBD
+Optional encoder conditioning or level shifting,1 set,signal conditioning,Use only if required by selected encoder electrical interface,TBD,Optional
+Optional ADC/current-sense module,1,sensing,Enhanced telemetry and protection,TBD,Optional
+Mechanical motor bracket and rotating guard,1 set,mechanical,Secure plant and prevent contact with rotating assembly,TBD,TBD
+Logic analyser or oscilloscope access,1,lab equipment,Verify SPI PWM sample timing and fault response,Lab resource,TBD
