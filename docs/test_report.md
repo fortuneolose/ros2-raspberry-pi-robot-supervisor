@@ -31,6 +31,7 @@ Complete for each released test campaign:
 | Test ID | Test | Key pass condition | Status |
 |---|---|---|---|
 | DOC-001 | Requirements traceability audit | Every mandatory requirement has design and verification links | Not run |
+| DOC-002 | Acceptance-criteria review | Final numerical thresholds are frozen before acceptance testing | Not run |
 | MODEL-001 | Plant/controller structural checks | Model documented; controllability and observability checks pass | Not run |
 | MODEL-010 | Floating-point control tests | Frozen stability and performance limits pass | Not run |
 | RTL-001 | Sample-enable and reset | Exactly one update pulse per configured interval; safe reset | Not run |
@@ -41,21 +42,28 @@ Complete for each released test campaign:
 | INT-001 | UART/SPI loopback | Repeatable transactions at selected rates | Not run |
 | INT-002 | Protocol fault injection | Corrupt/stale/repeated packets rejected and reported | Not run |
 | INT-003 | Dedicated control signals | ARM and IRQ/FAULT directions and safe defaults verified | Not run |
+| INT-010 | ROS 2 node and interface test | Required nodes, topics, parameters, commands, telemetry, and fault interfaces operate coherently | Not run |
 | INT-020 | Integrated FPGA control path | Observer, controller, PWM, telemetry, and faults operate coherently | Not run |
 | INT-021 | Atomic telemetry | Snapshot values are stable and sample counter is monotonic | Not run |
 | SYN-001 | Vivado implementation | Required timing closes; constraints complete; usage recorded | Not run |
+| HW-DR-001 | Electrical-interface design review | Voltage compatibility, pin assignments, protection, and safe defaults are approved | Not run |
+| HW-DR-002 | Power and component-ratings review | Driver, supplies, fuse, conductors, and connectors have documented worst-case margin | Not run |
 | SAFE-001 | Safe-state disable latency | PWM/enable reach safe state within frozen limit | Not run |
 | SAFE-002 | E-stop/fuse/current limit | Physical protections present and functional | Not run |
 | SAFE-003 | Arming interlock | No invalid input combination enables the actuator | Not run |
 | SAFE-004 | Fault-injection suite | Each required fault produces the specified state/status | Not run |
 | SAFE-005 | Reset and re-arm | No automatic restart; explicit sequence required | Not run |
+| SAFE-010 | Raspberry Pi process-loss test | FPGA watchdog reaches the specified safe state without relying on software recovery | Not run |
 | TIM-001 | FPGA update timing | No missed update; rate and jitter meet frozen limits | Not run |
 | TIM-010 | Pi scheduling under load | Period, latency, jitter, and misses recorded | Not run |
 | HIL-001 | Mechanical/pre-power inspection | Mount, guard, polarity, continuity, limits approved | Not run |
+| HIL-002 | Wiring inspection | Power paths, grounding, keying, labels, strain relief, and test points match approved drawings | Not run |
 | HIL-010 | Low-duty open-loop test | Direction, encoder, current, PWM, and stop controls correct | Not run |
 | HIL-020 | Comparative closed-loop experiment | Pi-only and hybrid datasets complete under matched conditions | Not run |
 | DATA-001 | Logging audit | Required fields and metadata present | Not run |
+| DATA-002 | Data reproducibility audit | Raw data remains immutable and processed results reproduce from versioned scripts | Not run |
 | REP-001 | Clean-checkout reproduction | Build, vectors, analysis, and report reproduce successfully | Not run |
+| REPORT-001 | Final metric review | Required control, timing, numerical, implementation, robustness, and safety metrics are reported | Not run |
 
 ## 4. Comparative metrics
 
