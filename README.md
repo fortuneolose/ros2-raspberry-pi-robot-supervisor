@@ -16,12 +16,13 @@ The target platform combines:
 
 ## Project status
 
-Requirements, architecture, and safety baselines plus two executable synthetic
-software milestones: a parameterized plant model and an observer-based
-floating-point controller. The compulsory demonstrator is a single, securely
-mounted motor test rig. A differential-drive mobile robot is an optional
-extension after the controller, observer, fixed-point datapath, and safety
-functions pass their acceptance tests.
+Requirements, architecture, and safety baselines plus three executable
+synthetic software milestones: a parameterized plant model, an observer-based
+floating-point controller, and a deterministic robustness/uncertainty
+analysis. The compulsory demonstrator is a single, securely mounted motor test
+rig. A differential-drive mobile robot is an optional extension after the
+controller, observer, fixed-point datapath, and safety functions pass their
+acceptance tests.
 
 Initial design targets are a 1 kHz control/observer update and an approximately
 20 kHz PWM carrier. These values and the final control-performance thresholds
@@ -96,16 +97,34 @@ pulse, and performance thresholds are synthetic development fixtures. They
 are not final control requirements or hardware-ready coefficients. See the
 [controller and observer baseline](docs/controller_observer_baseline.md).
 
+## Third executable non-hardware milestone
+
+`MODEL-020-SYNTHETIC` keeps the MODEL-010 controller and observer fixed while
+varying all six plant parameters one at a time and exercising encoder
+quantisation, seeded sensor noise, one- and two-sample command delay, reduced
+voltage, and a combined development stress case:
+
+```bash
+MPLCONFIGDIR=.matplotlib python -m models.validate_robustness
+```
+
+Twenty scenarios pass eight deterministic integrity checks. The ±20%
+parameter factors and nonidealities are illustrative software fixtures, not
+measured hardware uncertainties. See the
+[robustness and uncertainty baseline](docs/robustness_uncertainty_baseline.md).
+No fixed-point conversion is included in this milestone.
+
 ## Development sequence
 
 1. Freeze scope, select the motor/driver, and review the safety concept.
 2. Identify and validate the plant model.
 3. Design the controller and observer in floating point.
-4. Build a bit-accurate fixed-point reference model.
-5. Implement and instrument the Raspberry Pi benchmark.
-6. Verify the FPGA modules and integrated datapath against common vectors.
-7. Bring up UART, SPI, telemetry, watchdog, and fault handling.
-8. Commission hardware at conservative current, voltage, speed, and duty
+4. Evaluate plant uncertainty, sensing limits, delay, and actuator constraints.
+5. Freeze numeric ranges and build a bit-accurate fixed-point reference model.
+6. Implement and instrument the Raspberry Pi benchmark.
+7. Verify the FPGA modules and integrated datapath against common vectors.
+8. Bring up UART, SPI, telemetry, watchdog, and fault handling.
+9. Commission hardware at conservative current, voltage, speed, and duty
    limits before comparative experiments.
 
 ## Safety

@@ -145,6 +145,8 @@ Generated evidence:
 - FPGA RTL equivalence; or
 - safe physical operation.
 
-The next non-hardware gate is robustness and uncertainty analysis, followed by
-a bit-accurate fixed-point reference model once the floating-point design and
-plant parameter provenance are reviewed.
+`MODEL-020-SYNTHETIC` now addresses a bounded, explicitly synthetic subset of
+the robustness items above. It does not retroactively make MODEL-010 a
+physical acceptance result. The next gate is to review the floating-point
+coefficient provenance and numeric range budget before building a bit-accurate
+fixed-point reference model.

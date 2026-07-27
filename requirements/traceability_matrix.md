@@ -14,6 +14,7 @@ remains planned.
 | SYS-005 | Build scripts, model generation, vectors, analysis | REP-001 clean-checkout reproduction | Planned |
 | CTL-001, CTL-002 | Parameterized plant model | MODEL-001-SYNTHETIC structural checks | Implemented |
 | CTL-003 | State feedback, reference precompensator, and observer | MODEL-010-SYNTHETIC floating-point checks | Implemented |
+| CTL-003; VER-004 development portion | Floating-point uncertainty harness and reporting | MODEL-020-SYNTHETIC deterministic robustness checks | Implemented |
 | CTL-004 | Sample-enable generator; software scheduler | TIM-001 update-rate and jitter test | Planned |
 | CTL-005 | Experiment acceptance limits | DOC-002 acceptance-criteria review | Planned |
 | CTL-006, CTL-007, CTL-008, CTL-009 | Fixed-point model and RTL arithmetic | RTL-020 bit-accurate regression; RTL-021 boundary tests | Planned |

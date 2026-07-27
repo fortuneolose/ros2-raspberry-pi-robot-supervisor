@@ -1,4 +1,4 @@
-name: Model and control validation
+name: Model, control, and robustness validation
 
 on:
   push:
@@ -54,3 +54,8 @@ jobs:
         env:
           MPLCONFIGDIR: .matplotlib
         run: python -m models.validate_controller
+
+      - name: Regenerate synthetic robustness evidence
+        env:
+          MPLCONFIGDIR: .matplotlib
+        run: python -m models.validate_robustness
