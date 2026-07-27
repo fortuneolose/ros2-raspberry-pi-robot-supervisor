@@ -1,0 +1,180 @@
+{
+  "acceptance_limitation": "This is not final MODEL-001 acceptance evidence. The parameter set is synthetic and must be replaced after motor selection and plant identification.",
+  "continuous_matrices": {
+    "A": [
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        -10.0,
+        1.0
+      ],
+      [
+        0.0,
+        -0.02,
+        -2.0
+      ]
+    ],
+    "B": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        -100.0
+      ],
+      [
+        2.0,
+        0.0
+      ]
+    ],
+    "C": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "D": [
+      [
+        0.0,
+        0.0
+      ]
+    ]
+  },
+  "continuous_structure": {
+    "encoder_position_observability_rank": 3,
+    "fully_controllable_from_voltage": true,
+    "fully_observable_from_encoder_position": true,
+    "state_count": 3,
+    "voltage_input_controllability_rank": 3
+  },
+  "development_simulation": {
+    "duration_s": 1.0,
+    "final_state": {
+      "armature_current": 0.8641301548225903,
+      "shaft_position": 0.048441339801988045,
+      "shaft_speed": 0.08303711117081335
+    },
+    "opposing_load_torque_nm": 0.0,
+    "step_voltage_v": 1.0
+  },
+  "discrete_matrices": {
+    "A": [
+      [
+        1.0,
+        0.0009950166217681375,
+        4.980051554546534e-07
+      ],
+      [
+        0.0,
+        0.9900498238222155,
+        0.0009940206114572284
+      ],
+      [
+        0.0,
+        -1.988041222914456e-05,
+        0.9980019887138734
+      ]
+    ],
+    "B": [
+      [
+        3.32335396206283e-10,
+        -4.983374908508597e-05
+      ],
+      [
+        9.960103109093068e-07,
+        -0.09950166217681376
+      ],
+      [
+        0.0019980013260235494,
+        9.960103109093068e-07
+      ]
+    ],
+    "C": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "D": [
+      [
+        0.0,
+        0.0
+      ]
+    ]
+  },
+  "discrete_structure": {
+    "encoder_position_observability_rank": 3,
+    "fully_controllable_from_voltage": true,
+    "fully_observable_from_encoder_position": true,
+    "state_count": 3,
+    "voltage_input_controllability_rank": 3
+  },
+  "evidence_id": "MODEL-001-SYNTHETIC",
+  "generated_at_utc": "2026-07-25T20:35:04.370177+00:00",
+  "inputs": [
+    {
+      "name": "armature_voltage",
+      "unit": "V"
+    },
+    {
+      "name": "opposing_load_torque",
+      "unit": "N m"
+    }
+  ],
+  "model_assumptions": [
+    "linear time-invariant electrical and mechanical dynamics",
+    "rigid shaft with parameters referred to the modelled shaft",
+    "ideal applied armature voltage",
+    "linear viscous friction",
+    "ideal encoder-position measurement",
+    "no saturation, dead zone, stiction, backlash, quantisation, noise, or thermal variation"
+  ],
+  "not_demonstrated": [
+    "identified physical-motor parameters",
+    "controller or observer design",
+    "closed-loop performance",
+    "fixed-point arithmetic",
+    "Raspberry Pi timing",
+    "FPGA RTL",
+    "hardware-in-the-loop operation"
+  ],
+  "outputs": [
+    {
+      "name": "encoder_position",
+      "unit": "rad"
+    }
+  ],
+  "parameter_provenance": "Illustrative values for software verification only. These are not measurements or specifications for the final project motor.",
+  "parameter_set_id": "SYNTHETIC-DCM-001",
+  "parameter_status": "synthetic_software_fixture",
+  "result": "PASS",
+  "sample_period_s": 0.001,
+  "scope": "software-development structural check",
+  "software_environment": {
+    "matplotlib": "3.10.8",
+    "numpy": "2.3.5",
+    "python": "3.12.13",
+    "scipy": "1.17.0"
+  },
+  "states": [
+    {
+      "name": "shaft_position",
+      "unit": "rad"
+    },
+    {
+      "name": "shaft_speed",
+      "unit": "rad/s"
+    },
+    {
+      "name": "armature_current",
+      "unit": "A"
+    }
+  ]
+}
