@@ -1,8 +1,10 @@
 # Requirements Traceability Matrix
 
-Status values are `Planned`, `Implemented`, `Verified`, or `Deferred`. At this
-initial repository baseline every item is planned; no implementation or test
-evidence is claimed.
+Status values are `Planned`, `Implemented`, `Verified`, or `Deferred`.
+`Implemented` means that a design artefact exists; it does not imply final
+acceptance. The plant, controller, and observer rows are implemented only for
+the explicitly synthetic development fixture. Hardware-dependent acceptance
+remains planned.
 
 | Requirement(s) | Primary design element | Verification / evidence | Status |
 |---|---|---|---|
@@ -10,7 +12,8 @@ evidence is claimed.
 | SYS-002 | Pi benchmark mode and FPGA/hybrid mode | HIL-020 comparative experiment | Planned |
 | SYS-004 | Requirements and matrix in `requirements/` | DOC-001 traceability audit | Planned |
 | SYS-005 | Build scripts, model generation, vectors, analysis | REP-001 clean-checkout reproduction | Planned |
-| CTL-001, CTL-002, CTL-003 | Plant model, controller, observer | MODEL-001 structural and design checks | Planned |
+| CTL-001, CTL-002 | Parameterized plant model | MODEL-001-SYNTHETIC structural checks | Implemented |
+| CTL-003 | State feedback, reference precompensator, and observer | MODEL-010-SYNTHETIC floating-point checks | Implemented |
 | CTL-004 | Sample-enable generator; software scheduler | TIM-001 update-rate and jitter test | Planned |
 | CTL-005 | Experiment acceptance limits | DOC-002 acceptance-criteria review | Planned |
 | CTL-006, CTL-007, CTL-008, CTL-009 | Fixed-point model and RTL arithmetic | RTL-020 bit-accurate regression; RTL-021 boundary tests | Planned |

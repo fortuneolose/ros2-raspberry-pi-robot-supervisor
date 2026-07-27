@@ -101,8 +101,10 @@ The validation command generates a machine-readable report, step-response CSV,
 and plot. The report also records the Python and scientific-library versions.
 Each generated artifact repeats the synthetic-data limitation.
 
-## Next non-hardware gate
+## Subsequent non-hardware gate
 
-The next stage is to add state-feedback and observer design around this stable
-model interface. Final gain acceptance, performance thresholds, and
-fixed-point conversion remain blocked on a reviewed physical parameter set.
+The synthetic state-feedback and observer-development stage is now implemented
+in [controller_observer_baseline.md](controller_observer_baseline.md). Final
+gain acceptance and physical performance thresholds remain blocked on a
+reviewed motor parameter set. The next synthetic software work is robustness
+and uncertainty analysis before a bit-accurate fixed-point reference model.
