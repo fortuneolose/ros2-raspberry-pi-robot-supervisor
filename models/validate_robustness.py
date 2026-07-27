@@ -18,24 +18,19 @@ import numpy as np
 import scipy
 
 from models.control import (
-    ObserverControllerDesign,
     continuous_poles_to_discrete,
     design_observer_controller,
     simulate_observer_feedback,
 )
 from models.dc_motor import (
     MotorParameters,
-    StateSpaceModel,
     continuous_dc_motor_model,
     discretize_zero_order_hold,
 )
 from models.robustness import (
     RobustnessResult,
-    RobustnessScenario,
-    scaled_motor_parameters,
-    simulate_mismatched_observer_feedback,
-    summarize_result,
-    zero_delay_augmented_spectral_radius,
+    build_scenarios_from_mapping,
+    run_robustness_scenario,
 )
 
 
@@ -46,107 +41,6 @@ def load_json(path: Path) -> dict[str, Any]:
     if not isinstance(payload, dict):
         raise ValueError(f"{path} must contain a JSON object")
     return payload
-
-
-def build_scenarios(
-    robustness_payload: dict[str, Any],
-) -> list[RobustnessScenario]:
-    """Expand the configured nominal, one-at-a-time, and combined cases."""
-
-    simulation = robustness_payload["simulation"]
-    nominal_voltage = float(simulation["nominal_voltage_limit_v"])
-    scenarios = [
-        RobustnessScenario(
-            scenario_id="nominal",
-            category="baseline",
-            description="Exact MODEL-010 nominal plant and implementation.",
-            parameter_multipliers={},
-            voltage_limit_v=nominal_voltage,
-        )
-    ]
-    sweep = robustness_payload["parameter_sweep"]
-    for parameter_name in sweep["parameters"]:
-        for scale_value in sweep["scale_factors"]:
-            scale = float(scale_value)
-            scenarios.append(
-                RobustnessScenario(
-                    scenario_id=f"{parameter_name}-x{scale:.2f}",
-                    category="plant_parameter",
-                    description=(
-                        f"One-at-a-time synthetic multiplier of {scale:.2f} "
-                        f"on {parameter_name}."
-                    ),
-                    parameter_multipliers={parameter_name: scale},
-                    voltage_limit_v=nominal_voltage,
-                )
-            )
-
-    for values in robustness_payload["nonideality_scenarios"]:
-        scenarios.append(
-            RobustnessScenario(
-                scenario_id=str(values["scenario_id"]),
-                category=str(values["category"]),
-                description=str(values["description"]),
-                parameter_multipliers={
-                    str(name): float(multiplier)
-                    for name, multiplier in values.get(
-                        "parameter_multipliers", {}
-                    ).items()
-                },
-                measurement_noise_std_rad=float(
-                    values.get("measurement_noise_std_rad", 0.0)
-                ),
-                encoder_counts_per_revolution=values.get(
-                    "encoder_counts_per_revolution"
-                ),
-                control_delay_samples=values.get("control_delay_samples", 0),
-                voltage_limit_v=float(
-                    values.get("voltage_limit_v", nominal_voltage)
-                ),
-            )
-        )
-    for scenario in scenarios:
-        scenario.validate()
-    identifiers = [scenario.scenario_id for scenario in scenarios]
-    if len(identifiers) != len(set(identifiers)):
-        raise ValueError("scenario identifiers must be unique")
-    return scenarios
-
-
-def _run_scenario(
-    nominal_parameters: MotorParameters,
-    nominal_model: StateSpaceModel,
-    design: ObserverControllerDesign,
-    scenario: RobustnessScenario,
-    references: np.ndarray,
-    loads: np.ndarray,
-    sample_period_s: float,
-    random_seed: int,
-) -> tuple[RobustnessResult, dict[str, float | int | bool], float]:
-    parameters = scaled_motor_parameters(
-        nominal_parameters,
-        scenario.parameter_multipliers,
-    )
-    plant_model = discretize_zero_order_hold(
-        continuous_dc_motor_model(parameters),
-        sample_period_s,
-    )
-    result = simulate_mismatched_observer_feedback(
-        plant_model,
-        nominal_model,
-        design,
-        references,
-        loads,
-        scenario,
-        random_seed,
-    )
-    metrics = summarize_result(result, float(references[0]))
-    spectral_radius = zero_delay_augmented_spectral_radius(
-        plant_model,
-        nominal_model,
-        design,
-    )
-    return result, metrics, spectral_radius
 
 
 def build_report(
@@ -189,31 +83,29 @@ def build_report(
     references = np.full(sample_count, reference_rad, dtype=np.float64)
     loads = np.zeros(sample_count, dtype=np.float64)
     random_seed = int(robustness_payload["random_seed"])
-    scenarios = build_scenarios(robustness_payload)
+    scenarios = build_scenarios_from_mapping(robustness_payload)
     envelope = robustness_payload["development_integrity_envelope"]
 
     records: list[dict[str, Any]] = []
     results: dict[str, RobustnessResult] = {}
     repeatable = True
     for scenario in scenarios:
-        result, metrics, spectral_radius = _run_scenario(
+        result, metrics, spectral_radius = run_robustness_scenario(
             nominal_parameters,
             nominal_model,
             design,
             scenario,
             references,
             loads,
-            sample_period_s,
             random_seed,
         )
-        replay, replay_metrics, replay_radius = _run_scenario(
+        replay, replay_metrics, replay_radius = run_robustness_scenario(
             nominal_parameters,
             nominal_model,
             design,
             scenario,
             references,
             loads,
-            sample_period_s,
             random_seed,
         )
         repeatable &= (

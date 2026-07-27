@@ -1,0 +1,21 @@
+coefficient_id,block,value,unit,derivation,source_class
+A_position_position,observer_state_transition,1.0,target-state-unit/source-state-unit,Zero-order-hold discretisation of SYNTHETIC-DCM-001,derived_from_synthetic_inputs
+A_position_speed,observer_state_transition,0.0009950166217681375,target-state-unit/source-state-unit,Zero-order-hold discretisation of SYNTHETIC-DCM-001,derived_from_synthetic_inputs
+A_position_current,observer_state_transition,4.980051554546534e-07,target-state-unit/source-state-unit,Zero-order-hold discretisation of SYNTHETIC-DCM-001,derived_from_synthetic_inputs
+Bv_position,observer_voltage_input,3.32335396206283e-10,target-state-unit/V,Zero-order-hold discretisation of SYNTHETIC-DCM-001,derived_from_synthetic_inputs
+K_position,state_feedback,554.4338217446472,V/source-state-unit,scipy.signal.place_poles on the nominal discrete model,derived_from_synthetic_inputs
+L_position,observer_innovation,0.042538605523483874,target-state-unit/rad,dual scipy.signal.place_poles on the nominal discrete model,derived_from_synthetic_inputs
+A_speed_position,observer_state_transition,0.0,target-state-unit/source-state-unit,Zero-order-hold discretisation of SYNTHETIC-DCM-001,derived_from_synthetic_inputs
+A_speed_speed,observer_state_transition,0.9900498238222155,target-state-unit/source-state-unit,Zero-order-hold discretisation of SYNTHETIC-DCM-001,derived_from_synthetic_inputs
+A_speed_current,observer_state_transition,0.0009940206114572284,target-state-unit/source-state-unit,Zero-order-hold discretisation of SYNTHETIC-DCM-001,derived_from_synthetic_inputs
+Bv_speed,observer_voltage_input,9.960103109093068e-07,target-state-unit/V,Zero-order-hold discretisation of SYNTHETIC-DCM-001,derived_from_synthetic_inputs
+K_speed,state_feedback,55.433431925824934,V/source-state-unit,scipy.signal.place_poles on the nominal discrete model,derived_from_synthetic_inputs
+L_speed,observer_innovation,0.4497786789467554,target-state-unit/rad,dual scipy.signal.place_poles on the nominal discrete model,derived_from_synthetic_inputs
+A_current_position,observer_state_transition,0.0,target-state-unit/source-state-unit,Zero-order-hold discretisation of SYNTHETIC-DCM-001,derived_from_synthetic_inputs
+A_current_speed,observer_state_transition,-1.988041222914456e-05,target-state-unit/source-state-unit,Zero-order-hold discretisation of SYNTHETIC-DCM-001,derived_from_synthetic_inputs
+A_current_current,observer_state_transition,0.9980019887138734,target-state-unit/source-state-unit,Zero-order-hold discretisation of SYNTHETIC-DCM-001,derived_from_synthetic_inputs
+Bv_current,observer_voltage_input,0.0019980013260235494,target-state-unit/V,Zero-order-hold discretisation of SYNTHETIC-DCM-001,derived_from_synthetic_inputs
+K_current,state_feedback,9.918473477036333,V/source-state-unit,scipy.signal.place_poles on the nominal discrete model,derived_from_synthetic_inputs
+L_current,observer_innovation,4.0626979057837795,target-state-unit/rad,dual scipy.signal.place_poles on the nominal discrete model,derived_from_synthetic_inputs
+N_reference,reference_precompensator,554.4338217446472,V/rad,Nominal discrete steady-state unit-gain linear solve,derived_from_synthetic_inputs
+C_position,observer_output,1.0,rad/rad,Declared encoder-position output mapping,model_definition

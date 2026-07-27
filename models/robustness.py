@@ -9,12 +9,18 @@ motor lies inside the configured uncertainty envelope.
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from typing import Mapping, Sequence
+from typing import Any, Mapping, Sequence
 
 import numpy as np
 
 from models.control import ObserverControllerDesign
-from models.dc_motor import FloatArray, MotorParameters, StateSpaceModel
+from models.dc_motor import (
+    FloatArray,
+    MotorParameters,
+    StateSpaceModel,
+    continuous_dc_motor_model,
+    discretize_zero_order_hold,
+)
 
 _PARAMETER_NAMES = frozenset(MotorParameters.__dataclass_fields__)
 
@@ -92,6 +98,71 @@ class RobustnessResult:
     commanded_voltages_v: FloatArray
     applied_voltages_v: FloatArray
     saturated: np.ndarray
+
+
+def build_scenarios_from_mapping(
+    robustness_payload: Mapping[str, Any],
+) -> list[RobustnessScenario]:
+    """Expand nominal, one-at-a-time, and combined configured scenarios."""
+
+    simulation = robustness_payload["simulation"]
+    nominal_voltage = float(simulation["nominal_voltage_limit_v"])
+    scenarios = [
+        RobustnessScenario(
+            scenario_id="nominal",
+            category="baseline",
+            description="Exact MODEL-010 nominal plant and implementation.",
+            parameter_multipliers={},
+            voltage_limit_v=nominal_voltage,
+        )
+    ]
+    sweep = robustness_payload["parameter_sweep"]
+    for parameter_name in sweep["parameters"]:
+        for scale_value in sweep["scale_factors"]:
+            scale = float(scale_value)
+            scenarios.append(
+                RobustnessScenario(
+                    scenario_id=f"{parameter_name}-x{scale:.2f}",
+                    category="plant_parameter",
+                    description=(
+                        f"One-at-a-time synthetic multiplier of {scale:.2f} "
+                        f"on {parameter_name}."
+                    ),
+                    parameter_multipliers={parameter_name: scale},
+                    voltage_limit_v=nominal_voltage,
+                )
+            )
+
+    for values in robustness_payload["nonideality_scenarios"]:
+        scenarios.append(
+            RobustnessScenario(
+                scenario_id=str(values["scenario_id"]),
+                category=str(values["category"]),
+                description=str(values["description"]),
+                parameter_multipliers={
+                    str(name): float(multiplier)
+                    for name, multiplier in values.get(
+                        "parameter_multipliers", {}
+                    ).items()
+                },
+                measurement_noise_std_rad=float(
+                    values.get("measurement_noise_std_rad", 0.0)
+                ),
+                encoder_counts_per_revolution=values.get(
+                    "encoder_counts_per_revolution"
+                ),
+                control_delay_samples=values.get("control_delay_samples", 0),
+                voltage_limit_v=float(
+                    values.get("voltage_limit_v", nominal_voltage)
+                ),
+            )
+        )
+    for scenario in scenarios:
+        scenario.validate()
+    identifiers = [scenario.scenario_id for scenario in scenarios]
+    if len(identifiers) != len(set(identifiers)):
+        raise ValueError("scenario identifiers must be unique")
+    return scenarios
 
 
 def scaled_motor_parameters(
@@ -300,6 +371,45 @@ def zero_delay_augmented_spectral_radius(
         ]
     )
     return float(np.max(np.abs(np.linalg.eigvals(augmented))))
+
+
+def run_robustness_scenario(
+    nominal_parameters: MotorParameters,
+    nominal_model: StateSpaceModel,
+    design: ObserverControllerDesign,
+    scenario: RobustnessScenario,
+    references_rad: Sequence[float] | FloatArray,
+    load_torques_nm: Sequence[float] | FloatArray,
+    random_seed: int,
+) -> tuple[RobustnessResult, dict[str, float | int | bool], float]:
+    """Build the varied plant, run one case, and return metrics and radius."""
+
+    if nominal_model.sample_period_s is None:
+        raise ValueError("nominal_model must be discrete")
+    parameters = scaled_motor_parameters(
+        nominal_parameters,
+        scenario.parameter_multipliers,
+    )
+    plant_model = discretize_zero_order_hold(
+        continuous_dc_motor_model(parameters),
+        nominal_model.sample_period_s,
+    )
+    result = simulate_mismatched_observer_feedback(
+        plant_model,
+        nominal_model,
+        design,
+        references_rad,
+        load_torques_nm,
+        scenario,
+        random_seed,
+    )
+    metrics = summarize_result(result, float(np.asarray(references_rad)[0]))
+    spectral_radius = zero_delay_augmented_spectral_radius(
+        plant_model,
+        nominal_model,
+        design,
+    )
+    return result, metrics, spectral_radius
 
 
 def summarize_result(

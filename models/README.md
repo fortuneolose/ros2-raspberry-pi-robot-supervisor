@@ -36,6 +36,7 @@ python -m unittest discover -s tests -p "test_*.py" -v
 MPLCONFIGDIR=.matplotlib python -m models.validate_model
 MPLCONFIGDIR=.matplotlib python -m models.validate_controller
 MPLCONFIGDIR=.matplotlib python -m models.validate_robustness
+MPLCONFIGDIR=.matplotlib python -m models.validate_range_budget
 ```
 
 Generated development evidence is written to:
@@ -51,6 +52,10 @@ Generated development evidence is written to:
 - `data/processed/model_020_synthetic_robustness_results.csv`
 - `docs/media/model_020_parameter_sweep.png`
 - `docs/media/model_020_nonideality_summary.png`
+- `data/processed/model_020_synthetic_preflight_report.json`
+- `data/processed/model_020_synthetic_numeric_range_budget.csv`
+- `data/processed/model_020_synthetic_coefficient_provenance.csv`
+- `docs/media/model_020_synthetic_range_budget.png`
 
 Replace `models/parameters/synthetic_motor.json` only with a reviewed,
 source-backed or experimentally identified parameter set. Preserve the
@@ -59,4 +64,6 @@ in `models/parameters/synthetic_controller.json` to hardware without redesign
 against the identified plant, reviewed limits, and safety envelope.
 Likewise, the ranges in `models/parameters/synthetic_robustness.json` are not
 measured tolerances. Freeze a source-backed parameter set and numeric range
-budget before beginning fixed-point conversion.
+budget before beginning fixed-point conversion. The current preflight audit
+leaves coefficient freeze and fixed-point readiness on hold and assigns no
+fractional bits or binary points.

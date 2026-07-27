@@ -84,10 +84,18 @@ clock is required.
 
 ## 6. Numerical architecture
 
-The starting design point is signed 24-bit states, signed 18-bit coefficients,
-and full-width products accumulated into 48 bits where DSP mapping permits.
-This is a hypothesis, not a frozen format. MATLAB/Python range analysis and
-worst-case tests must determine scaling and guard bits.
+The original starting hypothesis was signed 24-bit states, signed 18-bit
+coefficients, and full-width products accumulated into 48 bits where DSP
+mapping permits. No part of that hypothesis is a frozen format.
+
+The `MODEL-020-PREFLIGHT-SYNTHETIC` audit shows that the current coefficients
+span approximately 40.60 binary orders of magnitude. A single shared 18-bit
+coefficient binary point is therefore not supported: representing the largest
+gain leaves only seven fractional bits and collapses several smaller model
+terms toward zero. The next numerical study must evaluate state normalization
+and block-, row-, or coefficient-specific scaling. The current 24- and 48-bit
+state/accumulator suggestions also remain unapproved until valid physical
+ranges and operation ordering are frozen.
 
 The bit-accurate reference model and RTL must agree on:
 

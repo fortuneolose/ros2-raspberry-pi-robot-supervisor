@@ -114,6 +114,15 @@ measured hardware uncertainties. See the
 [robustness and uncertainty baseline](docs/robustness_uncertainty_baseline.md).
 No fixed-point conversion is included in this milestone.
 
+A separate
+[coefficient-provenance and numeric-range audit](docs/coefficient_provenance_and_numeric_range_budget.md)
+reproduces the current gains and records 31 signal/intermediate ranges across
+24 synthetic cases. Audit execution passes, but coefficient freeze and
+fixed-point readiness remain **on hold** because the plant, pole targets,
+operating ranges, and uncertainty bounds are not physical. The audit also
+rejects one global binary point for the provisional 18-bit coefficient-width
+hypothesis.
+
 ## Development sequence
 
 1. Freeze scope, select the motor/driver, and review the safety concept.

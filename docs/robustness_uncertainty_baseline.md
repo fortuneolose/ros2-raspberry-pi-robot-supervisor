@@ -125,9 +125,13 @@ review:
 5. state, estimate, coefficient, accumulator, and control-signal range budgets.
 
 Fixed-point conversion is intentionally not implemented in this milestone.
-The next change should begin by freezing a reviewed floating-point coefficient
-set and numeric range budget, then define word lengths, scaling, rounding,
-saturation, and overflow behavior.
+The subsequent
+[coefficient-provenance and numeric-range audit](coefficient_provenance_and_numeric_range_budget.md)
+now reproduces the derivation chain and records a provisional 31-signal budget.
+Its execution passes, but coefficient freeze and fixed-point readiness remain
+on hold because the physical sources and valid operating envelope are absent.
+No word length, binary point, rounding, saturation, or overflow policy has
+been selected.
 
 ## Not demonstrated
 
