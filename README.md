@@ -1,8 +1,8 @@
 # Raspberry Pi–FPGA Robot Supervisor
 
-This repository is the engineering workspace for an MEng capstone project that
-implements and evaluates an observer-based, fixed-point state-space controller
-for an encoder-equipped robotic drive.
+This repository is the engineering workspace for an independent capstone-style
+engineering project implementing and evaluating an observer-based, fixed-point
+state-space controller for an encoder-equipped robotic drive.
 
 The target platform combines:
 
@@ -49,6 +49,11 @@ or ROS 2.
 requirements/   System requirements and requirements-to-test traceability
 docs/           Architecture, safety concept, test evidence, and media
 hardware/       Schematics, wiring, BOM, and component datasheets
+models/         Plant identification and floating/fixed-point models
+rtl/            FPGA SystemVerilog or Verilog modules
+constraints/    Basys 3 XDC constraints
+scripts/        Coefficient generation, builds, and result processing
+ros2_ws/        ROS 2 packages
 src/            ROS 2 interfaces, GPIO, feedback, safety, and bring-up code
 tests/          Unit, integration, and hardware-in-the-loop tests
 data/           Raw captures and processed experimental results
@@ -60,7 +65,7 @@ data/           Raw captures and processed experimental results
 1. Freeze scope, select the motor/driver, and review the safety concept.
 2. Identify and validate the plant model.
 3. Design the controller and observer in floating point.
-4. build a bit-accurate fixed-point reference model.
+4. Build a bit-accurate fixed-point reference model.
 5. Implement and instrument the Raspberry Pi benchmark.
 6. Verify the FPGA modules and integrated datapath against common vectors.
 7. Bring up UART, SPI, telemetry, watchdog, and fault handling.

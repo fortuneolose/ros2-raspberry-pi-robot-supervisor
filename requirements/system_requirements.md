@@ -2,8 +2,8 @@
 
 ## 1. Purpose and conventions
 
-These requirements establish the initial baseline for the single-axis motor
-demonstrator described in the project design dossier dated 19 July 2026.
+These requirements establish the initial baseline for the independent
+single-axis motor demonstrator.
 “Shall” statements are mandatory. Values marked **preliminary** must be
 confirmed after plant identification and hardware selection.
 
