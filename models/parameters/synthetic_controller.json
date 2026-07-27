@@ -1,0 +1,54 @@
+{
+  "design_id": "MODEL-010-SYNTHETIC",
+  "status": "synthetic_software_fixture",
+  "provenance": "Development pole targets and limits for exercising the software workflow only. They are not final motor-control gains or acceptance requirements.",
+  "controller": {
+    "method": "discrete pole placement from continuous-domain targets using z = exp(s * sample_period)",
+    "continuous_poles_rad_s": [
+      -8.0,
+      -10.0,
+      -14.0
+    ],
+    "reference_precompensator": "unit steady-state position gain for the nominal synthetic model"
+  },
+  "observer": {
+    "method": "discrete Luenberger observer pole placement",
+    "continuous_poles_rad_s": [
+      -15.0,
+      -18.0,
+      -22.0
+    ]
+  },
+  "simulation": {
+    "duration_s": 2.0,
+    "reference_position_rad": 0.01,
+    "voltage_limit_v": 6.0,
+    "load_pulse_start_s": 1.0,
+    "load_pulse_end_s": 1.2,
+    "load_pulse_nm": 0.001,
+    "observer_duration_s": 1.2,
+    "observer_initial_state": [
+      0.01,
+      0.1,
+      0.2
+    ],
+    "observer_initial_estimate": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "development_limits": {
+    "rise_time_10_90_s_max": 0.6,
+    "settling_time_2_percent_s_max": 1.0,
+    "overshoot_percent_max": 5.0,
+    "steady_state_error_rad_max": 0.0001,
+    "observer_component_limits": {
+      "position_error_rad": 0.00001,
+      "speed_error_rad_s": 0.0001,
+      "current_error_a": 0.0001
+    },
+    "observer_convergence_time_s_max": 0.8,
+    "disturbance_recovery_time_s_max": 0.7
+  }
+}

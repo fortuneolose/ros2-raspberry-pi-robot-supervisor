@@ -2,9 +2,10 @@
 
 ## 1. Baseline status
 
-**Status: not executed.** This file defines the initial verification record
-structure. No hardware, software, RTL, timing, safety, or performance result is
-claimed by the repository-initialisation commit.
+**Status: partially executed for synthetic software development.** The
+MODEL-001 and MODEL-010 synthetic checks have executable evidence. They do not
+constitute final plant or controller acceptance. ROS 2, RTL, timing, hardware,
+safety, and HIL tests remain unexecuted.
 
 ## 2. Test configuration
 
@@ -32,8 +33,8 @@ Complete for each released test campaign:
 |---|---|---|---|
 | DOC-001 | Requirements traceability audit | Every mandatory requirement has design and verification links | Not run |
 | DOC-002 | Acceptance-criteria review | Final numerical thresholds are frozen before acceptance testing | Not run |
-| MODEL-001 | Plant/controller structural checks | Model documented; controllability and observability checks pass | Not run |
-| MODEL-010 | Floating-point control tests | Frozen stability and performance limits pass | Not run |
+| MODEL-001 | Plant/controller structural checks | Model documented; controllability and observability checks pass | Development pass — synthetic fixture |
+| MODEL-010 | Floating-point control tests | Frozen stability and performance limits pass | Development pass — synthetic fixture |
 | RTL-001 | Sample-enable and reset | Exactly one update pulse per configured interval; safe reset | Not run |
 | RTL-002 | Encoder synchronisation/decode | Valid directions/counts; invalid transitions detected | Not run |
 | RTL-020 | Bit-accurate controller regression | Matches approved fixed-point reference tolerance | Not run |
@@ -86,3 +87,45 @@ For each test, add a subsection containing objective, mapped requirements,
 preconditions, procedure, limits, observed results, raw evidence links,
 deviations, pass/fail decision, operator, and reviewer. Failed or waived tests
 must link to a tracked corrective action or an explicitly accepted limitation.
+
+## 6. MODEL-010-SYNTHETIC development record
+
+**Objective:** demonstrate an executable floating-point controller and observer
+workflow before motor selection and plant identification.
+
+**Mapped requirements:** CTL-003 and the development portions of CTL-004,
+CTL-005, VER-001, and VER-004.
+
+**Method:** map continuous-domain pole targets into the z plane at 1 ms, place
+the discrete controller and observer poles, compute a nominal steady-state
+reference gain, simulate observer-based position feedback with a ±6 V limit,
+and inject a 1 mN m opposing load pulse.
+
+**Result:** development pass. All 16 repository unit tests and all 13
+machine-readable MODEL-010 checks passed in the recorded software environment.
+
+Key results:
+
+- 10–90% nominal rise time: 0.424 s;
+- 2% nominal settling time: 0.759 s;
+- nominal overshoot: 0%;
+- nominal steady-state error: 3.16e-8 rad;
+- peak nominal applied voltage: 5.544 V with no saturated samples;
+- observer component limits continuously satisfied after 0.741 s;
+- the normalized observer error initially peaks above its initial value,
+  documenting observer peaking that requires later noise and range analysis;
+- 1 mN m load-pulse recovery to the 2% band: 0.561 s.
+
+Evidence:
+
+- `data/processed/model_010_synthetic_report.json`
+- `data/processed/model_010_synthetic_response.csv`
+- `docs/media/model_010_synthetic_closed_loop.png`
+- `docs/media/model_010_synthetic_observer.png`
+- `tests/test_model_010.py`
+
+**Acceptance limitation:** the plant parameters, pole targets, gains,
+reference, voltage limit, disturbance, and thresholds are synthetic
+development fixtures. Integral disturbance rejection, measurement noise,
+parameter uncertainty, fixed-point arithmetic, scheduling, RTL, and physical
+operation have not been demonstrated.

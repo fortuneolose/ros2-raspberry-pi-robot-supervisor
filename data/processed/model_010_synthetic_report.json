@@ -1,0 +1,198 @@
+{
+  "acceptance_limitation": "This is not final MODEL-010 acceptance evidence. The plant, pole targets, voltage limit, reference, load pulse, and thresholds are synthetic development fixtures and must be revisited after motor selection and plant identification.",
+  "checks": {
+    "controller_pole_placement_error_below_1e_9": true,
+    "controller_poles_stable": true,
+    "disturbance_recovery_within_development_limit": true,
+    "nominal_response_not_saturated": true,
+    "nominal_voltage_within_limit": true,
+    "observer_convergence_within_development_limit": true,
+    "observer_final_error_within_development_limit": true,
+    "observer_pole_placement_error_below_1e_9": true,
+    "observer_poles_stable": true,
+    "overshoot_within_development_limit": true,
+    "rise_time_within_development_limit": true,
+    "settling_time_within_development_limit": true,
+    "steady_state_error_within_development_limit": true
+  },
+  "controller": {
+    "achieved_discrete_poles": [
+      {
+        "imaginary": 0.0,
+        "magnitude": 0.9860975442628201,
+        "real": 0.9860975442628201
+      },
+      {
+        "imaginary": 0.0,
+        "magnitude": 0.9900498337491472,
+        "real": 0.9900498337491472
+      },
+      {
+        "imaginary": 0.0,
+        "magnitude": 0.9920319148371214,
+        "real": 0.9920319148371214
+      }
+    ],
+    "continuous_pole_targets_rad_s": [
+      -8.0,
+      -10.0,
+      -14.0
+    ],
+    "maximum_pole_error": 6.072919944699606e-14,
+    "method": "discrete pole placement from continuous-domain targets using z = exp(s * sample_period)",
+    "reference_gain": 554.4338217446472,
+    "requested_discrete_poles": [
+      {
+        "imaginary": 0.0,
+        "magnitude": 0.9860975442628619,
+        "real": 0.9860975442628619
+      },
+      {
+        "imaginary": 0.0,
+        "magnitude": 0.9900498337491681,
+        "real": 0.9900498337491681
+      },
+      {
+        "imaginary": 0.0,
+        "magnitude": 0.9920319148370607,
+        "real": 0.9920319148370607
+      }
+    ],
+    "state_feedback_gain": [
+      [
+        554.4338217446472,
+        55.433431925824934,
+        9.918473477036333
+      ]
+    ]
+  },
+  "design_provenance": "Development pole targets and limits for exercising the software workflow only. They are not final motor-control gains or acceptance requirements.",
+  "design_status": "synthetic_software_fixture",
+  "development_limits": {
+    "disturbance_recovery_time_s_max": 0.7,
+    "observer_component_limits": {
+      "current_error_a": 0.0001,
+      "position_error_rad": 1e-05,
+      "speed_error_rad_s": 0.0001
+    },
+    "observer_convergence_time_s_max": 0.8,
+    "overshoot_percent_max": 5.0,
+    "rise_time_10_90_s_max": 0.6,
+    "settling_time_2_percent_s_max": 1.0,
+    "steady_state_error_rad_max": 0.0001
+  },
+  "evidence_id": "MODEL-010-SYNTHETIC",
+  "generated_at_utc": "2026-07-27T21:45:43.660628+00:00",
+  "load_pulse": {
+    "end_s": 1.2,
+    "final_tracking_error_rad": -6.284588889083481e-05,
+    "magnitude_nm": 0.001,
+    "peak_absolute_tracking_error_rad": 0.0010877093246984843,
+    "recovery_time_s": 0.5610000000000002,
+    "start_s": 1.0
+  },
+  "nominal_step": {
+    "duration_s": 2.0,
+    "maximum_applied_voltage_v": 5.544338217446472,
+    "overshoot_percent": 0.0,
+    "reference_position_rad": 0.01,
+    "rise_time_10_90_s": 0.42400000000000004,
+    "rms_tracking_error_rad": 0.0031826718826047313,
+    "saturated_sample_count": 0,
+    "settling_time_2_percent_s": 0.759,
+    "steady_state_error_rad": 3.164139259631549e-08,
+    "voltage_limit_v": 6.0
+  },
+  "not_demonstrated": [
+    "identified physical-motor parameters",
+    "final gain or performance acceptance",
+    "integral disturbance rejection",
+    "measurement-noise robustness",
+    "plant-parameter uncertainty",
+    "actuator dead zone or PWM nonlinearity",
+    "fixed-point arithmetic",
+    "Raspberry Pi scheduling",
+    "FPGA RTL",
+    "hardware-in-the-loop operation"
+  ],
+  "observer": {
+    "achieved_discrete_poles": [
+      {
+        "imaginary": 0.0,
+        "magnitude": 0.9782402350513297,
+        "real": 0.9782402350513297
+      },
+      {
+        "imaginary": 0.0,
+        "magnitude": 0.982161032358111,
+        "real": 0.982161032358111
+      },
+      {
+        "imaginary": 0.0,
+        "magnitude": 0.9851119396031646,
+        "real": 0.9851119396031646
+      }
+    ],
+    "component_limits": {
+      "current_error_a": 0.0001,
+      "position_error_rad": 1e-05,
+      "speed_error_rad_s": 0.0001
+    },
+    "continuous_pole_targets_rad_s": [
+      -15.0,
+      -18.0,
+      -22.0
+    ],
+    "convergence_definition": "All absolute component errors remain at or below their dimensioned limits.",
+    "convergence_time_s": 0.741,
+    "final_component_errors": {
+      "current_error_a": -1.0499250593237752e-07,
+      "position_error_rad": -3.321817057533316e-10,
+      "speed_error_rad_s": -9.192747703681836e-09
+    },
+    "final_normalized_max_error": 0.0010499250593237752,
+    "gain": [
+      [
+        0.042538605523483874
+      ],
+      [
+        0.4497786789467554
+      ],
+      [
+        4.0626979057837795
+      ]
+    ],
+    "initial_normalized_max_error": 2000.0,
+    "maximum_pole_error": 1.8973711490843925e-13,
+    "method": "discrete Luenberger observer pole placement",
+    "peak_normalized_max_error": 7113.182256733756,
+    "requested_discrete_poles": [
+      {
+        "imaginary": 0.0,
+        "magnitude": 0.97824023505121,
+        "real": 0.97824023505121
+      },
+      {
+        "imaginary": 0.0,
+        "magnitude": 0.9821610323583008,
+        "real": 0.9821610323583008
+      },
+      {
+        "imaginary": 0.0,
+        "magnitude": 0.9851119396030626,
+        "real": 0.9851119396030626
+      }
+    ]
+  },
+  "parameter_set_id": "SYNTHETIC-DCM-001",
+  "parameter_status": "synthetic_software_fixture",
+  "result": "PASS",
+  "sample_period_s": 0.001,
+  "scope": "synthetic floating-point controller and observer development check",
+  "software_environment": {
+    "matplotlib": "3.10.8",
+    "numpy": "2.3.5",
+    "python": "3.12.13",
+    "scipy": "1.17.0"
+  }
+}

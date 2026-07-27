@@ -16,10 +16,12 @@ The target platform combines:
 
 ## Project status
 
-Initial repository and requirements baseline. The compulsory demonstrator is a
-single, securely mounted motor test rig. A differential-drive mobile robot is
-an optional extension after the controller, observer, fixed-point datapath, and
-safety functions pass their acceptance tests.
+Requirements, architecture, and safety baselines plus two executable synthetic
+software milestones: a parameterized plant model and an observer-based
+floating-point controller. The compulsory demonstrator is a single, securely
+mounted motor test rig. A differential-drive mobile robot is an optional
+extension after the controller, observer, fixed-point datapath, and safety
+functions pass their acceptance tests.
 
 Initial design targets are a 1 kHz control/observer update and an approximately
 20 kHz PWM carrier. These values and the final control-performance thresholds
@@ -78,6 +80,22 @@ discretisation, voltage-input controllability, encoder-position observability,
 zero-input equilibrium, and a finite 1 V open-loop development response. See
 [the model baseline](docs/model_baseline.md) for assumptions and limitations.
 
+## Second executable non-hardware milestone
+
+The repository also includes discrete state-feedback pole placement, a
+steady-state reference precompensator, a Luenberger observer, voltage
+saturation, closed-loop simulation, load-pulse testing, and dimensioned
+observer-convergence checks. Reproduce the evidence with:
+
+```bash
+MPLCONFIGDIR=.matplotlib python -m models.validate_controller
+```
+
+The current gains, pole targets, 10 mrad reference, 6 V limit, 1 mN m load
+pulse, and performance thresholds are synthetic development fixtures. They
+are not final control requirements or hardware-ready coefficients. See the
+[controller and observer baseline](docs/controller_observer_baseline.md).
+
 ## Development sequence
 
 1. Freeze scope, select the motor/driver, and review the safety concept.
@@ -107,3 +125,5 @@ See [docs/safety_concept.md](docs/safety_concept.md).
 - [Safety concept](docs/safety_concept.md)
 - [Test report](docs/test_report.md)
 - [Bill of materials](hardware/bill_of_materials.csv)
+- [Pre-hardware software activity record, 25 July 2026](docs/reports/pre_hardware_software_activity_record_2026-07-25.docx)
+- [Controller and observer work session record, 27 July 2026](docs/reports/controller_observer_work_session_record_2026-07-27.docx)
