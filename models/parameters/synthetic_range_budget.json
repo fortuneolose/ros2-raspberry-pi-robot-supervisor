@@ -1,0 +1,73 @@
+{
+  "audit_id": "MODEL-020-PREFLIGHT-SYNTHETIC",
+  "status": "provisional_synthetic_observation",
+  "provenance": "A pre-fixed-point audit of repository-generated floating-point coefficients and observed synthetic simulation ranges. It is not an approved hardware coefficient set or a final fixed-point format.",
+  "observed_range_guard_factor": 2.0,
+  "configured_hard_bounds": {
+    "commanded_voltage_v": 6.0,
+    "applied_voltage_v": 6.0
+  },
+  "saturation_probe": {
+    "duration_s": 0.1,
+    "reference_position_rad": 0.1,
+    "voltage_limit_v": 6.0,
+    "provenance": "Synthetic limiter exercise already represented by the MODEL-010 large-reference unit test; not an approved command range."
+  },
+  "required_signal_ids": [
+    "true_position",
+    "true_speed",
+    "true_current",
+    "estimated_position",
+    "estimated_speed",
+    "estimated_current",
+    "measured_position_rad",
+    "reference_position_rad",
+    "load_torque_nm",
+    "innovation_rad",
+    "requested_voltage_v",
+    "commanded_voltage_v",
+    "applied_voltage_v",
+    "feedback_position_product_v",
+    "feedback_speed_product_v",
+    "feedback_current_product_v",
+    "feedback_accumulator_v",
+    "reference_product_v",
+    "controller_l1_sum_of_products_v",
+    "observer_prediction_position",
+    "observer_prediction_speed",
+    "observer_prediction_current",
+    "observer_voltage_term_position",
+    "observer_voltage_term_speed",
+    "observer_voltage_term_current",
+    "observer_correction_position",
+    "observer_correction_speed",
+    "observer_correction_current",
+    "observer_position_l1_sum_of_products",
+    "observer_speed_l1_sum_of_products",
+    "observer_current_l1_sum_of_products"
+  ],
+  "plot_signal_ids": [
+    "true_position",
+    "true_speed",
+    "true_current",
+    "estimated_position",
+    "estimated_speed",
+    "estimated_current",
+    "innovation_rad",
+    "requested_voltage_v",
+    "commanded_voltage_v",
+    "feedback_position_product_v",
+    "feedback_speed_product_v",
+    "feedback_current_product_v",
+    "controller_l1_sum_of_products_v",
+    "observer_current_l1_sum_of_products"
+  ],
+  "readiness_requirements": {
+    "identified_motor_parameters_with_uncertainty": false,
+    "approved_reference_and_disturbance_ranges": false,
+    "measured_encoder_resolution_and_timing": false,
+    "operation_order_frozen": false,
+    "quantization_error_and_stability_study_complete": false,
+    "rounding_saturation_and_overflow_policy_frozen": false
+  }
+}

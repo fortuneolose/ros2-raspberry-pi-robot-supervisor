@@ -1,0 +1,83 @@
+{
+  "analysis_id": "MODEL-020-SYNTHETIC",
+  "status": "synthetic_software_fixture",
+  "provenance": "Illustrative uncertainty ranges and nonidealities for development verification only. They are not measured tolerances, component specifications, or physical acceptance limits.",
+  "random_seed": 20260727,
+  "simulation": {
+    "duration_s": 2.0,
+    "reference_position_rad": 0.01,
+    "nominal_voltage_limit_v": 6.0
+  },
+  "parameter_sweep": {
+    "scale_factors": [
+      0.8,
+      1.2
+    ],
+    "parameters": [
+      "armature_resistance_ohm",
+      "armature_inductance_h",
+      "torque_constant_nm_per_a",
+      "back_emf_constant_v_per_rad_s",
+      "rotor_inertia_kg_m2",
+      "viscous_friction_nm_s_per_rad"
+    ]
+  },
+  "nonideality_scenarios": [
+    {
+      "scenario_id": "encoder-2048-count",
+      "category": "sensor",
+      "description": "Position rounded to a synthetic 2048-count/revolution encoder.",
+      "encoder_counts_per_revolution": 2048
+    },
+    {
+      "scenario_id": "sensor-noise-20-urad",
+      "category": "sensor",
+      "description": "Seeded Gaussian position noise with a 20 microradian standard deviation.",
+      "measurement_noise_std_rad": 0.00002
+    },
+    {
+      "scenario_id": "sensor-combined",
+      "category": "sensor",
+      "description": "A synthetic 4096-count/revolution encoder with seeded 20 microradian noise.",
+      "encoder_counts_per_revolution": 4096,
+      "measurement_noise_std_rad": 0.00002
+    },
+    {
+      "scenario_id": "one-sample-command-delay",
+      "category": "timing",
+      "description": "One unmodelled 1 ms sample of actuator-command delay.",
+      "control_delay_samples": 1
+    },
+    {
+      "scenario_id": "two-sample-command-delay",
+      "category": "timing",
+      "description": "Two unmodelled 1 ms samples of actuator-command delay.",
+      "control_delay_samples": 2
+    },
+    {
+      "scenario_id": "reduced-supply-4v5",
+      "category": "actuator",
+      "description": "Available command voltage reduced from 6.0 V to 4.5 V.",
+      "voltage_limit_v": 4.5
+    },
+    {
+      "scenario_id": "combined-development-stress",
+      "category": "combined",
+      "description": "Synthetic high inertia, low torque constant, sensor limitations, one-sample delay, and reduced supply.",
+      "parameter_multipliers": {
+        "rotor_inertia_kg_m2": 1.2,
+        "torque_constant_nm_per_a": 0.8
+      },
+      "encoder_counts_per_revolution": 4096,
+      "measurement_noise_std_rad": 0.00002,
+      "control_delay_samples": 1,
+      "voltage_limit_v": 4.5
+    }
+  ],
+  "development_integrity_envelope": {
+    "zero_delay_spectral_radius_max": 0.999999,
+    "peak_absolute_position_rad_max": 0.03,
+    "peak_absolute_speed_rad_s_max": 0.25,
+    "peak_absolute_current_a_max": 2.0
+  }
+}
