@@ -1,0 +1,461 @@
+{
+  "acceptance_limitation": "SIM-010 validates deterministic software behaviour only. All plant values, operating values, limits, and fault thresholds are synthetic. It is not physical, ROS 2 runtime, GPIO, timing, relay, H-bridge, encoder, supply, E-stop, or watchdog validation.",
+  "checks": {
+    "all_detected_or_latched_fault_records_safe": true,
+    "all_required_scenarios_executed": true,
+    "all_scenarios_pass": true,
+    "coefficient_freeze_hold_preserved": true,
+    "exact_replay_matches": true,
+    "fixed_point_conversion_hold_preserved": true,
+    "scenario_identifiers_unique": true
+  },
+  "coefficient_freeze_readiness": "HOLD",
+  "command_saturation_policy": "Finite commands inside or exactly at the synthetic absolute limit pass unchanged. Finite over-limit commands clip and set saturation telemetry without latching. Malformed or non-finite commands latch INVALID_COMMAND and force safe outputs.",
+  "determinism_basis": "sample-indexed execution, no wall clock, no random source, ordered in-memory channels, finite telemetry normalized to 12 significant decimal digits for serialization, exact full-suite replay, and CI regeneration diff enforcement",
+  "encoder_stale_definition": "The first valid sequence establishes age zero. Each subsequent valid repeated sequence increments the consecutive no-advance interval age; N-1 is healthy and configured age N faults. A valid sequence transition resets age to zero and establishes startup liveness.",
+  "evidence_id": "SIM-010-SYNTHETIC",
+  "fault_or_latched_record_count": 13,
+  "fixed_point_conversion_readiness": "HOLD",
+  "not_demonstrated": [
+    "physical plant or component behaviour",
+    "physical fault-detection thresholds or disable latency",
+    "ROS 2 executor, process, transport, or scheduling behaviour",
+    "GPIO or other electrical interfaces",
+    "hardware-in-the-loop operation",
+    "fixed-point coefficients, formats, or arithmetic",
+    "FPGA RTL"
+  ],
+  "provenance": "Deterministic software-in-the-loop values for supervisor workflow verification only. No value is measured from, specified for, or validated against physical hardware.",
+  "recovery_interlock": "Reset requires all active raw sources clear and arm/run both low. Requests in SAFE_SHUTDOWN or held into READY are ignored; one complete disarmed READY sample must precede a later new sample with arm/run both high.",
+  "result": "PASS",
+  "scenario_count": 11,
+  "scenarios": [
+    {
+      "all_fault_or_latched_records_safe": true,
+      "checks": {
+        "final_state_ready": true,
+        "no_fault_events": true,
+        "ready_observed": true,
+        "running_command_nonzero": true,
+        "running_observed": true,
+        "safe_shutdown_observed": true,
+        "safe_startup_observed": true,
+        "startup_and_shutdown_outputs_safe": true
+      },
+      "description": "Safe startup, ready, running, safe shutdown, and return to ready.",
+      "fault_events": [],
+      "fault_or_latched_record_count": 0,
+      "final_state": "READY",
+      "latched_faults_at_end": [],
+      "result": "PASS",
+      "sample_count": 11,
+      "scenario_id": "normal_startup_and_operation",
+      "states_visited": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "SAFE_SHUTDOWN"
+      ]
+    },
+    {
+      "all_fault_or_latched_records_safe": true,
+      "checks": {
+        "expected_fault_latched": true,
+        "fault_latched_state_reached": true,
+        "fault_records_force_or_preserve_safe_output": true,
+        "final_motor_command_zero": true,
+        "final_relay_command_disabled": true
+      },
+      "description": "Synthetic emergency-stop assertion while running.",
+      "fault_events": [
+        {
+          "action": "LATCHED",
+          "code": "EMERGENCY_STOP",
+          "sample_index": 5,
+          "state": "FAULT_LATCHED"
+        }
+      ],
+      "fault_or_latched_record_count": 1,
+      "final_state": "FAULT_LATCHED",
+      "latched_faults_at_end": [
+        "EMERGENCY_STOP"
+      ],
+      "result": "PASS",
+      "sample_count": 6,
+      "scenario_id": "estop_activation",
+      "states_visited": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ]
+    },
+    {
+      "all_fault_or_latched_records_safe": true,
+      "checks": {
+        "expected_fault_latched": true,
+        "fault_latched_state_reached": true,
+        "fault_records_force_or_preserve_safe_output": true,
+        "final_motor_command_zero": true,
+        "final_relay_command_disabled": true
+      },
+      "description": "Synthetic consecutive missed heartbeats at the configured threshold.",
+      "fault_events": [
+        {
+          "action": "LATCHED",
+          "code": "WATCHDOG_TIMEOUT",
+          "sample_index": 7,
+          "state": "FAULT_LATCHED"
+        }
+      ],
+      "fault_or_latched_record_count": 1,
+      "final_state": "FAULT_LATCHED",
+      "latched_faults_at_end": [
+        "WATCHDOG_TIMEOUT"
+      ],
+      "result": "PASS",
+      "sample_count": 8,
+      "scenario_id": "watchdog_timeout",
+      "states_visited": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ]
+    },
+    {
+      "all_fault_or_latched_records_safe": true,
+      "checks": {
+        "expected_fault_latched": true,
+        "fault_latched_state_reached": true,
+        "fault_records_force_or_preserve_safe_output": true,
+        "final_motor_command_zero": true,
+        "final_relay_command_disabled": true
+      },
+      "description": "Synthetic encoder sequence held stale at the configured threshold.",
+      "fault_events": [
+        {
+          "action": "LATCHED",
+          "code": "ENCODER_STALE",
+          "sample_index": 7,
+          "state": "FAULT_LATCHED"
+        }
+      ],
+      "fault_or_latched_record_count": 1,
+      "final_state": "FAULT_LATCHED",
+      "latched_faults_at_end": [
+        "ENCODER_STALE"
+      ],
+      "result": "PASS",
+      "sample_count": 8,
+      "scenario_id": "stale_encoder_telemetry",
+      "states_visited": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ]
+    },
+    {
+      "all_fault_or_latched_records_safe": true,
+      "checks": {
+        "expected_fault_latched": true,
+        "fault_latched_state_reached": true,
+        "fault_records_force_or_preserve_safe_output": true,
+        "final_motor_command_zero": true,
+        "final_relay_command_disabled": true
+      },
+      "description": "Synthetic encoder health failure while running.",
+      "fault_events": [
+        {
+          "action": "LATCHED",
+          "code": "ENCODER_FAILURE",
+          "sample_index": 5,
+          "state": "FAULT_LATCHED"
+        }
+      ],
+      "fault_or_latched_record_count": 1,
+      "final_state": "FAULT_LATCHED",
+      "latched_faults_at_end": [
+        "ENCODER_FAILURE"
+      ],
+      "result": "PASS",
+      "sample_count": 6,
+      "scenario_id": "encoder_failure",
+      "states_visited": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ]
+    },
+    {
+      "all_fault_or_latched_records_safe": true,
+      "checks": {
+        "expected_fault_latched": true,
+        "fault_latched_state_reached": true,
+        "fault_records_force_or_preserve_safe_output": true,
+        "final_motor_command_zero": true,
+        "final_relay_command_disabled": true
+      },
+      "description": "Synthetic relay feedback mismatch at the configured threshold.",
+      "fault_events": [
+        {
+          "action": "LATCHED",
+          "code": "RELAY_FEEDBACK_FAILURE",
+          "sample_index": 6,
+          "state": "FAULT_LATCHED"
+        }
+      ],
+      "fault_or_latched_record_count": 1,
+      "final_state": "FAULT_LATCHED",
+      "latched_faults_at_end": [
+        "RELAY_FEEDBACK_FAILURE"
+      ],
+      "result": "PASS",
+      "sample_count": 7,
+      "scenario_id": "relay_feedback_failure",
+      "states_visited": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ]
+    },
+    {
+      "all_fault_or_latched_records_safe": true,
+      "checks": {
+        "expected_fault_latched": true,
+        "fault_latched_state_reached": true,
+        "fault_records_force_or_preserve_safe_output": true,
+        "final_motor_command_zero": true,
+        "final_relay_command_disabled": true
+      },
+      "description": "Synthetic supply sample below the configured undervoltage threshold.",
+      "fault_events": [
+        {
+          "action": "LATCHED",
+          "code": "UNDERVOLTAGE",
+          "sample_index": 5,
+          "state": "FAULT_LATCHED"
+        }
+      ],
+      "fault_or_latched_record_count": 1,
+      "final_state": "FAULT_LATCHED",
+      "latched_faults_at_end": [
+        "UNDERVOLTAGE"
+      ],
+      "result": "PASS",
+      "sample_count": 6,
+      "scenario_id": "undervoltage",
+      "states_visited": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ]
+    },
+    {
+      "all_fault_or_latched_records_safe": true,
+      "checks": {
+        "finite_overlimit_command_clipped": true,
+        "ordinary_saturation_not_faulted": true,
+        "relay_remains_enabled": true,
+        "running_state_preserved": true,
+        "saturation_reported": true
+      },
+      "description": "Finite synthetic voltage clips at the configured absolute limit without latching a fault.",
+      "fault_events": [],
+      "fault_or_latched_record_count": 0,
+      "final_state": "RUNNING",
+      "latched_faults_at_end": [],
+      "result": "PASS",
+      "sample_count": 6,
+      "scenario_id": "command_voltage_saturation",
+      "states_visited": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING"
+      ]
+    },
+    {
+      "all_fault_or_latched_records_safe": true,
+      "checks": {
+        "expected_fault_latched": true,
+        "fault_latched_state_reached": true,
+        "fault_records_force_or_preserve_safe_output": true,
+        "final_motor_command_zero": true,
+        "final_relay_command_disabled": true,
+        "latched_interval_preserves_safe_output": true,
+        "source_clear_does_not_clear_latch": true
+      },
+      "description": "Fault source clears but the latch and safe outputs persist.",
+      "fault_events": [
+        {
+          "action": "LATCHED",
+          "code": "UNDERVOLTAGE",
+          "sample_index": 5,
+          "state": "FAULT_LATCHED"
+        }
+      ],
+      "fault_or_latched_record_count": 4,
+      "final_state": "FAULT_LATCHED",
+      "latched_faults_at_end": [
+        "UNDERVOLTAGE"
+      ],
+      "result": "PASS",
+      "sample_count": 9,
+      "scenario_id": "fault_latching",
+      "states_visited": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ]
+    },
+    {
+      "all_fault_or_latched_records_safe": true,
+      "checks": {
+        "expected_fault_latched": true,
+        "fault_latched_state_reached": true,
+        "fault_records_force_or_preserve_safe_output": true,
+        "final_motor_command_zero": true,
+        "final_relay_command_disabled": true,
+        "rejected_restart_output_safe": true,
+        "restart_did_not_reach_running": true,
+        "unsafe_reset_not_accepted": true,
+        "unsafe_reset_rejected": true
+      },
+      "description": "Reset is rejected while arm and run remain asserted.",
+      "fault_events": [
+        {
+          "action": "LATCHED",
+          "code": "EMERGENCY_STOP",
+          "sample_index": 5,
+          "state": "FAULT_LATCHED"
+        },
+        {
+          "action": "REJECTED",
+          "code": "RESET_SEQUENCE",
+          "sample_index": 6,
+          "state": "FAULT_LATCHED"
+        }
+      ],
+      "fault_or_latched_record_count": 2,
+      "final_state": "FAULT_LATCHED",
+      "latched_faults_at_end": [
+        "EMERGENCY_STOP"
+      ],
+      "result": "PASS",
+      "sample_count": 7,
+      "scenario_id": "rejected_unsafe_restart",
+      "states_visited": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ]
+    },
+    {
+      "all_fault_or_latched_records_safe": true,
+      "checks": {
+        "complete_disarmed_ready_sample_observed": true,
+        "expected_fault_latched": true,
+        "explicit_reset_accepted": true,
+        "fault_latched_state_reached": true,
+        "fault_records_force_or_preserve_safe_output": true,
+        "final_motor_command_zero": true,
+        "final_relay_command_disabled": true,
+        "latched_faults_cleared": true,
+        "new_arm_and_run_required": true,
+        "ready_reached_before_rearm": true,
+        "reset_enters_safe_shutdown": true
+      },
+      "description": "Source clear, explicit reset, safe shutdown, ready, and new re-arm.",
+      "fault_events": [
+        {
+          "action": "LATCHED",
+          "code": "EMERGENCY_STOP",
+          "sample_index": 5,
+          "state": "FAULT_LATCHED"
+        },
+        {
+          "action": "ACCEPTED",
+          "code": "RESET_SEQUENCE",
+          "sample_index": 6,
+          "state": "SAFE_SHUTDOWN"
+        }
+      ],
+      "fault_or_latched_record_count": 1,
+      "final_state": "RUNNING",
+      "latched_faults_at_end": [],
+      "result": "PASS",
+      "sample_count": 11,
+      "scenario_id": "successful_controlled_recovery",
+      "states_visited": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED",
+        "SAFE_SHUTDOWN"
+      ]
+    }
+  ],
+  "scope": "deterministic hardware-independent synthetic supervisor software-in-the-loop validation",
+  "simulated_interfaces": [
+    "dc_motor",
+    "encoder",
+    "h_bridge_command",
+    "relay_enable_and_feedback",
+    "emergency_stop",
+    "watchdog",
+    "supply_voltage_monitor",
+    "telemetry_channel",
+    "fault_channel"
+  ],
+  "status": "synthetic_software_fixture",
+  "supervisor_states": [
+    "SAFE_STARTUP",
+    "READY",
+    "RUNNING",
+    "FAULT_LATCHED",
+    "SAFE_SHUTDOWN"
+  ],
+  "synthetic_configuration": {
+    "fault_thresholds": {
+      "encoder_stale_samples": 3,
+      "relay_feedback_mismatch_samples": 2,
+      "safe_shutdown_hold_samples": 2,
+      "safe_startup_healthy_samples": 2,
+      "watchdog_missed_heartbeat_samples": 3
+    },
+    "interfaces": {
+      "encoder_counts_per_revolution": 4096,
+      "fault_channel": "in_memory_ordered_events",
+      "telemetry_channel": "in_memory_ordered_records"
+    },
+    "motor_parameters": {
+      "armature_inductance_h": 0.5,
+      "armature_resistance_ohm": 1.0,
+      "back_emf_constant_v_per_rad_s": 0.01,
+      "rotor_inertia_kg_m2": 0.01,
+      "torque_constant_nm_per_a": 0.01,
+      "viscous_friction_nm_s_per_rad": 0.1
+    },
+    "motor_sample_period_s": 0.001,
+    "operating_limits": {
+      "command_voltage_abs_max_v": 6.0,
+      "undervoltage_threshold_v": 4.5
+    },
+    "operating_values": {
+      "nominal_supply_voltage_v": 6.0,
+      "normal_run_command_voltage_v": 2.0
+    },
+    "plant": {
+      "motor_parameter_file": "models/parameters/synthetic_motor.json",
+      "motor_parameter_set_id": "SYNTHETIC-DCM-001",
+      "opposing_load_torque_nm": 0.0
+    }
+  },
+  "telemetry_record_count": 85
+}

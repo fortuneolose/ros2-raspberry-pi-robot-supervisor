@@ -153,3 +153,62 @@ Raspberry Pi configuration, Basys 3 master constraints, and PCB revision.
 
 Fault recovery returns through the disarmed state. It cannot transition
 directly from faulted to running.
+
+## 10. SIM-010 software-in-the-loop architecture
+
+SIM-010 provides an executable, hardware-independent development analogue of
+the intended supervisor safety partition. It is sample-indexed Python with no
+ROS 2 runtime, GPIO, serial link, FPGA RTL, or wall-clock scheduling:
+
+```text
+scenario inputs
+   |
+   +--> simulated E-stop, watchdog, supply, and encoder monitors
+   |                              |
+   +--> arm/run/shutdown/reset -->+--> deterministic supervisor
+                                          |
+                                 downstream safety gate
+                                    |             |
+                             relay enable     H-bridge command
+                                    |             |
+                             relay feedback ------+
+                                                  |
+                                      synthetic DC motor model
+                                                  |
+                                   telemetry and fault channels
+```
+
+The software states are `SAFE_STARTUP`, `READY`, `RUNNING`,
+`FAULT_LATCHED`, and `SAFE_SHUTDOWN`. Only `RUNNING` may issue relay enable
+and a nonzero motor command. Strict input validation runs before state and
+interface logic. Primary faults are checked before actuation; relay feedback
+is checked immediately after the simulated relay command. Any detected fault
+changes or preserves `FAULT_LATCHED` and forces the same sample to:
+
+```text
+relay_enable_command = false
+motor_command_v = 0.0
+```
+
+Clearing a fault source does not clear the latch. A persistent synthetic relay
+failure remains a raw reset blocker even when the relay mismatch counter has
+returned to zero. Recovery requires arm and run low, all sources absent, an
+explicit reset, and a safe-shutdown hold. Requests sampled in safe shutdown or
+held into ready are ignored. READY must observe one complete disarmed sample
+before a later new arm-and-run sample can enter RUNNING.
+
+Safe startup requires a valid encoder baseline followed by a genuine valid
+sequence transition; a baseline value alone is not liveness, and fault
+recovery cannot bypass this gate. Watchdog, stale encoder, and relay-mismatch
+thresholds fault exactly on configured sample `N`, not at `N-1`. Finite
+H-bridge requests beyond the synthetic absolute limit clip and report
+saturation while running; malformed or non-finite commands are safety faults
+and force the safe output.
+
+All SIM-010 plant values, operating values, limits, and fault thresholds are
+explicitly synthetic in
+`models/parameters/synthetic_sim_010.json`. The bench reuses
+`SYNTHETIC-DCM-001`; it does not establish a physical architecture, response
+time, threshold, component rating, or safety claim. The implementation and
+limitations are detailed in
+[the SIM-010 baseline](sim_010_software_in_loop.md).

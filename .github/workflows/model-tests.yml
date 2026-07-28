@@ -1,4 +1,4 @@
-name: Model, control, robustness, and preflight validation
+name: Model, control, robustness, preflight, and SIM-010 validation
 
 on:
   push:
@@ -8,12 +8,16 @@ on:
       - ".github/workflows/model-tests.yml"
       - "models/**"
       - "tests/**"
+      - "data/processed/sim_010_synthetic_validation_report.json"
+      - "data/processed/sim_010_synthetic_scenario_trace.csv"
       - "requirements-dev.txt"
   pull_request:
     paths:
       - ".github/workflows/model-tests.yml"
       - "models/**"
       - "tests/**"
+      - "data/processed/sim_010_synthetic_validation_report.json"
+      - "data/processed/sim_010_synthetic_scenario_trace.csv"
       - "requirements-dev.txt"
 
 permissions:
@@ -64,3 +68,12 @@ jobs:
         env:
           MPLCONFIGDIR: .matplotlib
         run: python -m models.validate_range_budget
+
+      - name: Regenerate SIM-010 synthetic SIL evidence
+        run: python -m models.validate_sim
+
+      - name: Reject SIM-010 evidence drift
+        run: >-
+          git diff --exit-code --
+          data/processed/sim_010_synthetic_validation_report.json
+          data/processed/sim_010_synthetic_scenario_trace.csv
