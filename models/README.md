@@ -13,9 +13,11 @@ pulse. `MODEL-020-SYNTHETIC` adds deterministic parameter sweeps and sensor,
 timing, and actuator nonidealities before fixed-point conversion.
 `SIM-010-SYNTHETIC` adds a sample-indexed supervisor and simulated motor,
 encoder, H-bridge, relay, E-stop, watchdog, supply, telemetry, and fault
-interfaces. All are software fixtures. None is an identified model, accepted
-controller, ROS 2 runtime result, or physical validation of the eventual
-motor, Raspberry Pi, FPGA, or plant.
+interfaces. `ROS2-010-SYNTHETIC` imports that supervisor as the authoritative
+ROS-independent state machine and adapts typed ROS 2 Jazzy messages around it;
+it does not alter or duplicate `models/sil.py`. All are software fixtures.
+None is an identified model, accepted controller, physical validation of the
+eventual motor, Raspberry Pi, FPGA, or plant.
 
 ## Model
 
@@ -62,6 +64,8 @@ Generated development evidence is written to:
 - `docs/media/model_020_synthetic_range_budget.png`
 - `data/processed/sim_010_synthetic_validation_report.json`
 - `data/processed/sim_010_synthetic_scenario_trace.csv`
+- `data/processed/ros2_010_synthetic_validation_report.json`
+- `data/processed/ros2_010_synthetic_message_trace.csv`
 
 Replace `models/parameters/synthetic_motor.json` only with a reviewed,
 source-backed or experimentally identified parameter set. Preserve the
@@ -82,3 +86,11 @@ supervisor requires an encoder sequence transition before READY and a
 disarmed READY sample before a later arm/run request. Finite commands beyond
 the synthetic absolute limit are clipped with saturation telemetry and do not
 fault; malformed or non-finite commands latch a safe-output fault.
+
+ROS2-010 keeps this module authoritative. Its adapter converts accepted
+monotonic ROS publisher sequences into `SupervisorInputs`; required telemetry
+loss becomes the existing stale/watchdog inputs, and every output message is
+derived from the resulting `TelemetryRecord`. The ROS node's 20 ms default
+timer is a synthetic middleware fixture and is not a replacement for the
+model's 1 ms sample metadata or a physical timing claim. See
+`docs/ros2_010_middleware_integration.md`.

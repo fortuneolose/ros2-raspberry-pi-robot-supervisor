@@ -1,0 +1,14 @@
+builtin_interfaces/Time stamp
+uint64 sample_index
+string state_before
+string state
+float64 requested_motor_voltage_v
+float64 motor_command_v
+bool command_saturated
+bool relay_enable_command
+bool relay_enable_feedback
+float64 encoder_position_rad
+uint64 encoder_sequence
+string command_disposition
+string encoder_disposition
+string safety_disposition

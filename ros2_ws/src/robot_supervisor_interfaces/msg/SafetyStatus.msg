@@ -1,0 +1,11 @@
+builtin_interfaces/Time stamp
+uint64 sample_index
+string state
+bool safe_output
+bool encoder_liveness_established
+uint32 encoder_stale_age_samples
+uint32 watchdog_missed_samples
+uint32 relay_feedback_mismatch_samples
+bool supply_healthy
+bool reset_accepted
+bool reset_rejected

@@ -1,0 +1,11 @@
+simulator_node:
+  ros__parameters:
+    synthetic_configuration: true
+    tick_period_s: 0.01
+    topic_prefix: /robot_supervisor
+    nominal_supply_voltage_v: 6.0
+    undervoltage_voltage_v: 4.4
+    auto_publish_command: true
+    auto_arm_request: false
+    auto_run_request: false
+    auto_requested_motor_voltage_v: 0.0

@@ -1,0 +1,227 @@
+{
+  "checks": {
+    "all_detected_or_latched_fault_outputs_safe": true,
+    "all_scenarios_pass": true,
+    "coefficient_freeze_hold_preserved": true,
+    "exact_replay_matches": true,
+    "fixed_point_conversion_hold_preserved": true,
+    "startup_output_safe": true
+  },
+  "coefficient_freeze_readiness": "HOLD",
+  "determinism_basis": "sample-indexed frame sequences, no random source, authoritative SIM-010 ticks, exact replay, stable JSON/CSV serialization",
+  "evidence_id": "ROS2-010-SYNTHETIC",
+  "fault_or_latched_trace_count": 15,
+  "fixed_point_conversion_readiness": "HOLD",
+  "not_demonstrated": [
+    "physical safety or emergency-stop function",
+    "GPIO or electrical relay operation",
+    "physical motor, encoder, supply, or disable timing",
+    "real-time scheduling or bounded DDS latency",
+    "fixed-point coefficients, binary points, arithmetic, or RTL"
+  ],
+  "result": "PASS",
+  "scenario_count": 13,
+  "scenarios": [
+    {
+      "checks": {
+        "finite_saturation_clipped": true,
+        "normal_running": true,
+        "saturation_not_faulted": true,
+        "saturation_reported": true
+      },
+      "result": "PASS",
+      "scenario_id": "normal_startup_running_and_saturation",
+      "states": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING"
+      ],
+      "trace_count": 7
+    },
+    {
+      "checks": {
+        "same_tick_safe_fault": true
+      },
+      "result": "PASS",
+      "scenario_id": "software_estop",
+      "states": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ],
+      "trace_count": 6
+    },
+    {
+      "checks": {
+        "n_faults_safe": true,
+        "n_minus_one_healthy": true
+      },
+      "result": "PASS",
+      "scenario_id": "watchdog_n_minus_one_and_n",
+      "states": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ],
+      "trace_count": 8
+    },
+    {
+      "checks": {
+        "n_faults_safe": true,
+        "n_minus_one_healthy": true
+      },
+      "result": "PASS",
+      "scenario_id": "missing_encoder_n_minus_one_and_n",
+      "states": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ],
+      "trace_count": 8
+    },
+    {
+      "checks": {
+        "duplicate_age_faults_safe": true,
+        "duplicates_explicit": true
+      },
+      "result": "PASS",
+      "scenario_id": "duplicate_encoder",
+      "states": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ],
+      "trace_count": 8
+    },
+    {
+      "checks": {
+        "out_of_order_explicit": true,
+        "out_of_order_faults_safe": true
+      },
+      "result": "PASS",
+      "scenario_id": "out_of_order_encoder",
+      "states": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ],
+      "trace_count": 6
+    },
+    {
+      "checks": {
+        "encoder_failure_safe": true
+      },
+      "result": "PASS",
+      "scenario_id": "encoder_failure",
+      "states": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ],
+      "trace_count": 6
+    },
+    {
+      "checks": {
+        "n_faults_safe": true,
+        "n_minus_one_inhibits_motor": true
+      },
+      "result": "PASS",
+      "scenario_id": "relay_feedback_n_minus_one_and_n",
+      "states": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ],
+      "trace_count": 7
+    },
+    {
+      "checks": {
+        "below_threshold_safe_fault": true,
+        "exact_threshold_healthy": true
+      },
+      "result": "PASS",
+      "scenario_id": "undervoltage",
+      "states": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ],
+      "trace_count": 7
+    },
+    {
+      "checks": {
+        "nonfinite_command_safe_fault": true
+      },
+      "result": "PASS",
+      "scenario_id": "malformed_nonfinite_command",
+      "states": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ],
+      "trace_count": 6
+    },
+    {
+      "checks": {
+        "controlled_rearm_runs": true,
+        "held_request_cannot_restart": true,
+        "safe_reset_accepted": true,
+        "source_clear_preserves_latch": true,
+        "unsafe_reset_rejected": true
+      },
+      "result": "PASS",
+      "scenario_id": "fault_latch_reset_and_controlled_recovery",
+      "states": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED",
+        "SAFE_SHUTDOWN"
+      ],
+      "trace_count": 15
+    },
+    {
+      "checks": {
+        "restart_requires_liveness": true,
+        "restart_safe_startup": true,
+        "restart_sample_resets": true
+      },
+      "result": "PASS",
+      "scenario_id": "supervisor_restart",
+      "states": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING"
+      ],
+      "trace_count": 6
+    },
+    {
+      "checks": {
+        "disappearance_faults": true,
+        "disappearance_safe": true
+      },
+      "result": "PASS",
+      "scenario_id": "simulator_telemetry_disappearance",
+      "states": [
+        "SAFE_STARTUP",
+        "READY",
+        "RUNNING",
+        "FAULT_LATCHED"
+      ],
+      "trace_count": 8
+    }
+  ],
+  "scope": "hardware-independent ROS 2 Jazzy middleware adaptation around the authoritative SIM-010 supervisor",
+  "software_estop_limitation": "The software E-stop topic is synthetic test input only and is not a physical emergency-stop or independent power removal.",
+  "trace_count": 98,
+  "transport_semantics": "accepted monotonic publisher sequences are consumed once per supervisor tick; duplicates are ignored, out-of-order frames are rejected, and required-message disappearance advances SIM-010 encoder/watchdog fail-safe counters"
+}
