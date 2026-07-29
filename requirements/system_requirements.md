@@ -44,6 +44,7 @@ acceptance method require review.
 | SW-003 | A software control loop shall use absolute next-deadline scheduling and record actual period, computation time, and missed deadlines. | Timing test |
 | SW-004 | The system shall log timestamps, references, measured states, estimated states, control effort, saturation, and fault events with experiment metadata. | Data audit |
 | SW-005 | Loss or failure of a Raspberry Pi process shall not leave the actuator enabled indefinitely. | Fault-injection test |
+| SW-006 | A deterministic, hardware-independent software-in-the-loop bench shall provide configurable simulated DC-motor, encoder, H-bridge command, relay enable/feedback, emergency-stop, watchdog, supply-voltage, telemetry, and fault interfaces without requiring ROS 2 or GPIO. Every bench plant value, operating value, limit, and fault threshold shall be explicitly labelled synthetic. | SIM-010 automated test and configuration audit |
 
 ## 5. FPGA behaviour
 
@@ -84,6 +85,7 @@ acceptance method require review.
 | SAF-006 | Re-arming after a fault shall require the fault source to be absent and an explicit reset/re-arm sequence; reset alone shall not cause motion. | HIL test |
 | SAF-007 | Each commissioning stage shall define maximum voltage, current, speed, and command limits before motor power is enabled. | Test-plan review |
 | SAF-008 | Hardware changes shall be followed by power-off continuity, polarity, connector-orientation, and default-enable checks. | Signed checklist |
+| SAF-009 | The software-in-the-loop supervisor shall cover safe startup, ready, running, fault-latched, safe-shutdown, and controlled-recovery states. Every detected or latched simulated safety fault shall force or preserve relay enable disabled and motor command equal to zero in the detecting sample. Safe startup shall require a valid encoder sequence transition after the initial baseline. Recovery shall require all raw fault sources clear, an explicit reset with both arm and run deasserted, return through safe shutdown, one complete READY sample with both requests deasserted, and a subsequent new sample with both asserted; requests held through shutdown or into READY shall not start motion. | SIM-010 state-transition, boundary, and fault-injection tests |
 
 ## 8. Verification and evidence
 
@@ -94,3 +96,4 @@ acceptance method require review.
 | VER-003 | Physical commissioning shall proceed from power-off inspection through separated power, communications, synthetic encoder, low-duty open loop, observer-only, conservative closed loop, and fault injection. | Signed test record |
 | VER-004 | Comparative experiments shall report control performance, timing, numerical error, resource usage, robustness, and safety-response metrics. | Test report review |
 | VER-005 | Raw experimental captures shall be immutable; processing steps and generated results shall be reproducible and versioned. | Data audit |
+| VER-006 | SIM-010 shall automatically exercise normal operation, E-stop, watchdog timeout, stale encoder telemetry, encoder failure, relay feedback failure, undervoltage, command-voltage saturation, fault latching, rejected unsafe restart, and successful controlled recovery, and shall generate deterministic machine-readable scenario and sample evidence. Finite motor commands inside or exactly at the synthetic absolute limit shall pass unchanged; finite commands beyond it shall clip with saturation telemetry and no safety fault; malformed or non-finite commands shall latch an invalid-command fault and force safe outputs. CI shall regenerate the JSON and CSV evidence and reject byte-content drift. | Independent SIM-010 unit and boundary tests, exact replay check, evidence-regeneration diff check, JSON report, and CSV trace |

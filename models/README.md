@@ -10,9 +10,12 @@ discretisation, simulation path, and controllability/observability checks.
 `MODEL-010-SYNTHETIC` adds state feedback, reference precompensation, a
 Luenberger observer, voltage limiting, nominal position tracking, and a load
 pulse. `MODEL-020-SYNTHETIC` adds deterministic parameter sweeps and sensor,
-timing, and actuator nonidealities before fixed-point conversion. All three
-are software fixtures. None is an identified model or accepted controller for
-the eventual motor, Raspberry Pi, FPGA, or physical plant.
+timing, and actuator nonidealities before fixed-point conversion.
+`SIM-010-SYNTHETIC` adds a sample-indexed supervisor and simulated motor,
+encoder, H-bridge, relay, E-stop, watchdog, supply, telemetry, and fault
+interfaces. All are software fixtures. None is an identified model, accepted
+controller, ROS 2 runtime result, or physical validation of the eventual
+motor, Raspberry Pi, FPGA, or plant.
 
 ## Model
 
@@ -37,6 +40,7 @@ MPLCONFIGDIR=.matplotlib python -m models.validate_model
 MPLCONFIGDIR=.matplotlib python -m models.validate_controller
 MPLCONFIGDIR=.matplotlib python -m models.validate_robustness
 MPLCONFIGDIR=.matplotlib python -m models.validate_range_budget
+python -m models.validate_sim
 ```
 
 Generated development evidence is written to:
@@ -56,6 +60,8 @@ Generated development evidence is written to:
 - `data/processed/model_020_synthetic_numeric_range_budget.csv`
 - `data/processed/model_020_synthetic_coefficient_provenance.csv`
 - `docs/media/model_020_synthetic_range_budget.png`
+- `data/processed/sim_010_synthetic_validation_report.json`
+- `data/processed/sim_010_synthetic_scenario_trace.csv`
 
 Replace `models/parameters/synthetic_motor.json` only with a reviewed,
 source-backed or experimentally identified parameter set. Preserve the
@@ -67,3 +73,12 @@ measured tolerances. Freeze a source-backed parameter set and numeric range
 budget before beginning fixed-point conversion. The current preflight audit
 leaves coefficient freeze and fixed-point readiness on hold and assigns no
 fractional bits or binary points.
+
+SIM-010 configuration is in
+`models/parameters/synthetic_sim_010.json`. Every plant value, operating value,
+limit, and threshold in that configuration is synthetic. The bench does not
+use ROS 2, GPIO, wall-clock timing, fixed-point formats, or RTL. The synthetic
+supervisor requires an encoder sequence transition before READY and a
+disarmed READY sample before a later arm/run request. Finite commands beyond
+the synthetic absolute limit are clipped with saturation telemetry and do not
+fault; malformed or non-finite commands latch a safe-output fault.

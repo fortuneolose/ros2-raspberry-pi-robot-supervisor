@@ -1,0 +1,32 @@
+{
+  "test_bench_id": "SIM-010-SYNTHETIC",
+  "status": "synthetic_software_fixture",
+  "provenance": "Deterministic software-in-the-loop values for supervisor workflow verification only. No value is measured from, specified for, or validated against physical hardware.",
+  "synthetic_plant": {
+    "motor_parameter_file": "models/parameters/synthetic_motor.json",
+    "motor_parameter_set_id": "SYNTHETIC-DCM-001",
+    "opposing_load_torque_nm": 0.0
+  },
+  "synthetic_operating_values": {
+    "nominal_supply_voltage_v": 6.0,
+    "normal_run_command_voltage_v": 2.0
+  },
+  "synthetic_operating_limits": {
+    "command_voltage_abs_max_v": 6.0,
+    "undervoltage_threshold_v": 4.5
+  },
+  "synthetic_fault_thresholds": {
+    "safe_startup_healthy_samples": 2,
+    "safe_shutdown_hold_samples": 2,
+    "watchdog_missed_heartbeat_samples": 3,
+    "encoder_stale_samples": 3,
+    "relay_feedback_mismatch_samples": 2
+  },
+  "synthetic_interfaces": {
+    "encoder_counts_per_revolution": 4096,
+    "telemetry_channel": "in_memory_ordered_records",
+    "fault_channel": "in_memory_ordered_events"
+  },
+  "coefficient_freeze_readiness": "HOLD",
+  "fixed_point_conversion_readiness": "HOLD"
+}

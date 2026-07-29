@@ -3,11 +3,12 @@
 ## 1. Baseline status
 
 **Status: partially executed for synthetic software development.** The
-MODEL-001, MODEL-010, and MODEL-020 synthetic checks have executable evidence.
-They do not constitute final plant, controller, or robustness acceptance.
-The MODEL-020 preflight audit executes successfully but leaves coefficient
-freeze and fixed-point readiness on hold. ROS 2, RTL, platform timing,
-hardware, safety, and HIL tests remain unexecuted.
+MODEL-001, MODEL-010, MODEL-020, and SIM-010 synthetic checks have executable
+evidence. They do not constitute final plant, controller, robustness,
+supervisor, or safety acceptance. The MODEL-020 preflight audit and SIM-010
+both preserve coefficient freeze and fixed-point readiness on hold. ROS 2
+runtime, GPIO, RTL, platform timing, physical hardware, safety, and HIL tests
+remain unexecuted.
 
 ## 2. Test configuration
 
@@ -38,6 +39,7 @@ Complete for each released test campaign:
 | MODEL-001 | Plant/controller structural checks | Model documented; controllability and observability checks pass | Development pass — synthetic fixture |
 | MODEL-010 | Floating-point control tests | Frozen stability and performance limits pass | Development pass — synthetic fixture |
 | MODEL-020 | Floating-point robustness, provenance, and range analysis | Synthetic scenarios are repeatable and bounded; derivation and ranges are traceable without falsely approving physical coefficients | Development pass — coefficient/fixed-point readiness hold |
+| SIM-010 | Hardware-independent supervisor software-in-the-loop | All required scenarios and exact replay pass; every detected/latched fault record has relay disabled and zero motor command | Development pass — synthetic software only; coefficient/fixed-point readiness hold |
 | RTL-001 | Sample-enable and reset | Exactly one update pulse per configured interval; safe reset | Not run |
 | RTL-002 | Encoder synchronisation/decode | Valid directions/counts; invalid transitions detected | Not run |
 | RTL-020 | Bit-accurate controller regression | Matches approved fixed-point reference tolerance | Not run |
@@ -195,3 +197,81 @@ deliberately not started in this milestone.
 freeze coefficients or begin fixed-point conversion until physical parameter
 provenance, valid operating ranges, encoder/timing evidence, arithmetic order,
 quantisation/stability analysis, and numerical policies are resolved.
+
+## 8. SIM-010-SYNTHETIC development record
+
+**Objective:** implement a deterministic, hardware-independent supervisor
+software-in-the-loop bench with configurable synthetic interfaces and
+machine-readable safety-state evidence.
+
+**Mapped requirements:** SW-006, SAF-009, VER-006, and the software-development
+portions of SAF-001, SAF-004, SAF-005, and SAF-006.
+
+**Method:** reuse the existing `SYNTHETIC-DCM-001` discrete motor model; drive
+sample-indexed simulated encoder, H-bridge command, relay enable/feedback,
+E-stop, watchdog, supply-monitor, telemetry, and fault interfaces; execute the
+safe-startup, ready, running, fault-latched, safe-shutdown, and controlled
+recovery state machine; exercise exact threshold and malformed-input
+boundaries with independent bench instances; run all scenarios twice and
+require exact equality; regenerate committed evidence in CI and reject drift.
+
+**Result:** development pass. All 73 repository unit tests passed, including
+38 independent SIM-010 tests. All 11 scenarios and all 7 top-level
+machine-readable checks passed. The scenario set produced 85 ordered
+telemetry records. Thirteen
+records contain a newly detected fault or an active fault latch; every one has
+relay enable command false and motor command exactly `0.0`.
+
+Scenario results:
+
+| Scenario | Result | Safety result |
+|---|---|---|
+| Normal startup and operation | PASS | Safe startup/shutdown; nonzero command only in running |
+| E-stop activation | PASS | `EMERGENCY_STOP` latched; same-sample safe output |
+| Watchdog timeout | PASS | `WATCHDOG_TIMEOUT` latched at the synthetic sample threshold |
+| Stale encoder telemetry | PASS | `ENCODER_STALE` latched at the synthetic sample threshold |
+| Encoder failure | PASS | `ENCODER_FAILURE` latched |
+| Relay feedback failure | PASS | Command inhibited; `RELAY_FEEDBACK_FAILURE` latched |
+| Undervoltage | PASS | `UNDERVOLTAGE` latched |
+| Command-voltage saturation | PASS | Finite over-limit command clipped to the synthetic limit; saturation recorded; no fault latched |
+| Fault latching | PASS | Source clearance does not clear latch or safe output |
+| Rejected unsafe restart | PASS | Reset rejected while arm/run asserted |
+| Successful controlled recovery | PASS | Explicit reset enters safe shutdown; a complete disarmed READY sample precedes a later new re-arm sample |
+
+Evidence:
+
+- `models/sil.py`
+- `models/validate_sim.py`
+- `models/parameters/synthetic_sim_010.json`
+- `tests/test_sim_010.py`
+- `data/processed/sim_010_synthetic_validation_report.json`
+- `data/processed/sim_010_synthetic_scenario_trace.csv`
+- `docs/sim_010_software_in_loop.md`
+
+**Synthetic values:** the test bench uses the explicitly synthetic
+`SYNTHETIC-DCM-001` plant and the explicitly synthetic SIM-010 configuration:
+6.0 V nominal supply, 2.0 V normal command, 6.0 V absolute command limit,
+4.5 V undervoltage threshold, two startup samples, two shutdown samples,
+three missed-heartbeat samples, three stale-encoder samples, two
+relay-mismatch samples, and 4096 encoder counts/revolution. None is a physical
+setting, rating, threshold, or validation result.
+
+The synthetic watchdog, encoder-stale, and relay-mismatch counters fault
+exactly at their configured `N` samples; `N-1` does not fault. Encoder startup
+requires a valid sequence transition after its baseline. Supply exactly at
+the synthetic threshold is healthy. Finite commands exactly at the positive
+or negative synthetic limit pass unchanged, while finite over-limit commands
+clip and continue. Strings, `None`, Booleans in numeric fields, NaN,
+infinities, prohibited negative values, and malformed Boolean fields produce
+deterministic safe fault telemetry rather than uncaught conversion errors.
+
+**Acceptance limitation:** SIM-010 does not execute ROS 2, GPIO, serial
+communications, FPGA RTL, wall-clock scheduling, or hardware. It does not
+model physical disable latency, welded relay contacts, E-stop power removal,
+ADC error, supply transients, asynchronous encoder behaviour, or component
+failure distributions. It does not close SAFE-001 through SAFE-005 hardware
+or RTL verification.
+
+**Pre-fixed-point gate:** coefficient freeze and fixed-point conversion remain
+on hold. SIM-010 adds no fixed-point coefficients, binary points, word
+lengths, arithmetic policies, or RTL.

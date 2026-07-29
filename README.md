@@ -16,13 +16,14 @@ The target platform combines:
 
 ## Project status
 
-Requirements, architecture, and safety baselines plus three executable
+Requirements, architecture, and safety baselines plus four executable
 synthetic software milestones: a parameterized plant model, an observer-based
-floating-point controller, and a deterministic robustness/uncertainty
-analysis. The compulsory demonstrator is a single, securely mounted motor test
-rig. A differential-drive mobile robot is an optional extension after the
-controller, observer, fixed-point datapath, and safety functions pass their
-acceptance tests.
+floating-point controller, a deterministic robustness/uncertainty analysis,
+and the SIM-010 hardware-independent supervisor software-in-the-loop bench.
+The compulsory demonstrator is a single, securely mounted motor test rig. A
+differential-drive mobile robot is an optional extension after the controller,
+observer, fixed-point datapath, and safety functions pass their acceptance
+tests.
 
 Initial design targets are a 1 kHz control/observer update and an approximately
 20 kHz PWM carrier. These values and the final control-performance thresholds
@@ -123,6 +124,42 @@ operating ranges, and uncertainty bounds are not physical. The audit also
 rejects one global binary point for the provisional 18-bit coefficient-width
 hypothesis.
 
+## Fourth executable non-hardware milestone
+
+`SIM-010-SYNTHETIC` is a deterministic, hardware-independent supervisor test
+bench. It reuses the existing synthetic DC motor model and provides
+configurable in-memory interfaces for the encoder, H-bridge command, relay
+enable/feedback, emergency stop, watchdog, supply monitor, telemetry, and
+fault events. It contains no ROS 2 runtime dependency or GPIO access.
+
+```bash
+python -m models.validate_sim
+```
+
+The 11 scenarios cover normal startup/operation, E-stop, watchdog timeout,
+stale and failed encoder telemetry, relay feedback failure, undervoltage,
+command-voltage saturation, fault latching, rejected unsafe restart, and
+controlled recovery. Every detected or latched safety fault record must have
+relay command disabled and motor command exactly zero. The validator executes
+the full suite twice and requires exact equality before writing:
+
+- `data/processed/sim_010_synthetic_validation_report.json`
+- `data/processed/sim_010_synthetic_scenario_trace.csv`
+
+Startup requires a real encoder sequence transition, not only an initial
+sequence value. Recovery requires a complete READY sample with arm/run low
+before a later new arm/run sample; requests held through safe shutdown are
+ignored. Finite voltage requests beyond the synthetic limit are clipped and
+reported without latching, while malformed or non-finite commands fault and
+force safe outputs. CI regenerates the JSON and CSV and rejects evidence
+drift.
+
+All plant values, operating values, limits, and fault thresholds are
+explicitly synthetic. SIM-010 is software-behaviour evidence, not physical,
+ROS 2 runtime, GPIO, timing, or hardware validation. See the
+[SIM-010 software-in-the-loop baseline](docs/sim_010_software_in_loop.md).
+Coefficient freeze and fixed-point conversion remain **on hold**.
+
 ## Development sequence
 
 1. Freeze scope, select the motor/driver, and review the safety concept.
@@ -152,6 +189,7 @@ See [docs/safety_concept.md](docs/safety_concept.md).
 - [Architecture](docs/architecture.md)
 - [Safety concept](docs/safety_concept.md)
 - [Test report](docs/test_report.md)
+- [SIM-010 software-in-the-loop baseline](docs/sim_010_software_in_loop.md)
 - [Bill of materials](hardware/bill_of_materials.csv)
 - [Pre-hardware software activity record, 25 July 2026](docs/reports/pre_hardware_software_activity_record_2026-07-25.docx)
 - [Controller and observer work session record, 27 July 2026](docs/reports/controller_observer_work_session_record_2026-07-27.docx)

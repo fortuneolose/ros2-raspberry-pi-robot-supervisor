@@ -4,7 +4,9 @@ Status values are `Planned`, `Implemented`, `Verified`, or `Deferred`.
 `Implemented` means that a design artefact exists; it does not imply final
 acceptance. The plant, controller, and observer rows are implemented only for
 the explicitly synthetic development fixture. Hardware-dependent acceptance
-remains planned.
+remains planned. `Verified — synthetic software only` means the stated
+software-fixture behaviour has executable evidence; it does not close any
+physical, ROS 2 runtime, GPIO, RTL, timing, or HIL verification.
 
 | Requirement(s) | Primary design element | Verification / evidence | Status |
 |---|---|---|---|
@@ -23,6 +25,7 @@ remains planned.
 | SW-003 | Absolute-deadline software loop | TIM-010 Linux load/jitter test | Planned |
 | SW-004 | Logger and experiment metadata | DATA-001 logging schema audit | Planned |
 | SW-005 | Heartbeat/watchdog interaction | SAFE-010 Pi-process-loss test | Planned |
+| SW-006 | Configurable SIM-010 motor, encoder, H-bridge, relay, E-stop, watchdog, supply, telemetry, and fault interfaces | `models/sil.py`; `models/parameters/synthetic_sim_010.json`; `tests/test_sim_010.py` | Verified — synthetic software only |
 | FPGA-001 | RTL module hierarchy | RTL unit suite and INT-020 controller integration | Planned |
 | FPGA-002 | Clock/reset manager and sample enable | RTL-001 pulse/timing test | Planned |
 | FPGA-003 | Input synchronisers and encoder decoder | RTL-002 asynchronous-input test | Planned |
@@ -42,11 +45,13 @@ remains planned.
 | SAF-005 | Watchdog, encoder, arithmetic, E-stop faults | SAFE-004 fault-injection suite | Planned |
 | SAF-006 | Fault reset and re-arm state machine | SAFE-005 reset/re-arm sequence test | Planned |
 | SAF-007, SAF-008 | Commissioning plan and checklist | HIL test-record review | Planned |
+| SAF-001, SAF-004, SAF-005, SAF-006 development portion; SAF-009 | SIM-010 state machine, downstream safe-output gate, encoder startup-liveness gate, fault latch, raw-source reset interlock, and qualified controlled recovery | SIM-010 11-scenario validation report and 85-row trace; every one of 13 detected/latched fault records is safe; independent threshold and recovery-ordering tests | Verified — synthetic software only |
 | VER-001 | Floating-point golden model | MODEL-010 reference-model review | Planned |
 | VER-002 | RTL unit and integration tests | CI and regression artefacts | Planned |
 | VER-003 | Staged hardware bring-up | HIL-001 through HIL-020 records | Planned |
 | VER-004 | Analysis and report pipeline | REPORT-001 final metric review | Planned |
 | VER-005 | `data/raw`, `data/processed`, processing scripts | DATA-002 reproducibility audit | Planned |
+| VER-006 | Deterministic SIM-010 scenario runner, finite-command clip telemetry, malformed-input safety handling, and evidence generator | `data/processed/sim_010_synthetic_validation_report.json`; `data/processed/sim_010_synthetic_scenario_trace.csv`; exact replay and CI evidence-regeneration diff checks | Verified — synthetic software only |
 
 ## Evidence naming
 
