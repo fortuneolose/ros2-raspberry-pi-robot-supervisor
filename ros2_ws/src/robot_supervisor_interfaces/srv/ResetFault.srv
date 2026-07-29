@@ -1,0 +1,7 @@
+# Human/tool identity is diagnostic only. SIM-010 decides acceptance.
+string requester
+---
+bool accepted
+string reason
+uint64 sample_index
+string state

@@ -1,0 +1,7 @@
+# Test-only synthetic fault control served by robot_supervisor_sim.
+string fault
+bool active
+uint32 duration_samples
+---
+bool accepted
+string reason

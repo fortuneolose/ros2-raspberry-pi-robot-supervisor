@@ -16,10 +16,11 @@ The target platform combines:
 
 ## Project status
 
-Requirements, architecture, and safety baselines plus four executable
+Requirements, architecture, and safety baselines plus five executable
 synthetic software milestones: a parameterized plant model, an observer-based
 floating-point controller, a deterministic robustness/uncertainty analysis,
-and the SIM-010 hardware-independent supervisor software-in-the-loop bench.
+the SIM-010 hardware-independent supervisor software-in-the-loop bench, and
+the ROS2-010 ROS 2 Jazzy middleware integration.
 The compulsory demonstrator is a single, securely mounted motor test rig. A
 differential-drive mobile robot is an optional extension after the controller,
 observer, fixed-point datapath, and safety functions pass their acceptance
@@ -57,7 +58,7 @@ models/         Plant identification and floating/fixed-point models
 rtl/            FPGA SystemVerilog or Verilog modules
 constraints/    Basys 3 XDC constraints
 scripts/        Coefficient generation, builds, and result processing
-ros2_ws/        ROS 2 packages
+ros2_ws/        ROS 2 interfaces, supervisor, simulator, launch tests, and container
 src/            ROS 2 interfaces, GPIO, feedback, safety, and bring-up code
 tests/          Unit, integration, and hardware-in-the-loop tests
 data/           Raw captures and processed experimental results
@@ -160,6 +161,53 @@ ROS 2 runtime, GPIO, timing, or hardware validation. See the
 [SIM-010 software-in-the-loop baseline](docs/sim_010_software_in_loop.md).
 Coefficient freeze and fixed-point conversion remain **on hold**.
 
+## Fifth executable non-hardware milestone
+
+`ROS2-010-SYNTHETIC` adds typed ROS 2 Jazzy middleware around the authoritative
+SIM-010 supervisor without changing `models/sil.py` or duplicating its safety
+state machine:
+
+```text
+ros2_ws/src/
+├── robot_supervisor_interfaces/
+├── robot_supervisor/
+└── robot_supervisor_sim/
+```
+
+The supervisor node validates monotonic publisher sequences and freshness,
+maps message-neutral frames into `SupervisorInputs`, advances SIM-010 on
+deterministic ticks, and publishes actuator, state, safety, and fault
+telemetry. An explicit reset service returns SIM-010's accepted/rejected
+decision and reason. Startup, shutdown, every detected fault, and every active
+fault latch publish or preserve relay disabled and motor voltage zero.
+
+The simulator publishes synthetic encoder, relay-feedback, supply,
+software-E-stop, and heartbeat data; consumes actuator commands; and exposes
+deterministic test-only fault injection. The software E-stop topic is not a
+physical safety function. No package accesses GPIO or makes electrical,
+physical relay, motor, supply, E-stop, or timing claims.
+
+Native ROS 2 was unavailable in the recorded Windows/WSL environment, so the
+repository includes a digest-pinned Jazzy container and a GitHub Actions
+route:
+
+```bash
+docker build -f ros2_ws/Dockerfile.jazzy -t ros2-010-jazzy:local .
+docker run --rm ros2-010-jazzy:local
+```
+
+The current deterministic evidence contains 13 passing scenarios and 98
+message traces:
+
+- `data/processed/ros2_010_synthetic_validation_report.json`
+- `data/processed/ros2_010_synthetic_message_trace.csv`
+
+See the
+[ROS2-010 middleware integration record](docs/ros2_010_middleware_integration.md)
+for the graph, interfaces, QoS, age semantics, tests, reproduction commands,
+and limitations. Coefficient freeze and fixed-point conversion remain
+**on hold**.
+
 ## Development sequence
 
 1. Freeze scope, select the motor/driver, and review the safety concept.
@@ -190,6 +238,7 @@ See [docs/safety_concept.md](docs/safety_concept.md).
 - [Safety concept](docs/safety_concept.md)
 - [Test report](docs/test_report.md)
 - [SIM-010 software-in-the-loop baseline](docs/sim_010_software_in_loop.md)
+- [ROS2-010 middleware integration](docs/ros2_010_middleware_integration.md)
 - [Bill of materials](hardware/bill_of_materials.csv)
 - [Pre-hardware software activity record, 25 July 2026](docs/reports/pre_hardware_software_activity_record_2026-07-25.docx)
 - [Controller and observer work session record, 27 July 2026](docs/reports/controller_observer_work_session_record_2026-07-27.docx)

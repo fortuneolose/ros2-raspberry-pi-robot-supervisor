@@ -1,0 +1,11 @@
+supervisor_node:
+  ros__parameters:
+    synthetic_configuration: true
+    tick_period_s: 0.02
+    command_stale_samples: 3
+    topic_prefix: /robot_supervisor
+    # Empty values select package data installed from the authoritative
+    # repository models/parameters JSON sources during the ament build.
+    sim_config_path: ""
+    motor_config_path: ""
+    synthetic_exit_after_ticks: 0

@@ -3,12 +3,13 @@
 ## 1. Baseline status
 
 **Status: partially executed for synthetic software development.** The
-MODEL-001, MODEL-010, MODEL-020, and SIM-010 synthetic checks have executable
-evidence. They do not constitute final plant, controller, robustness,
-supervisor, or safety acceptance. The MODEL-020 preflight audit and SIM-010
-both preserve coefficient freeze and fixed-point readiness on hold. ROS 2
-runtime, GPIO, RTL, platform timing, physical hardware, safety, and HIL tests
-remain unexecuted.
+MODEL-001, MODEL-010, MODEL-020, SIM-010, and ROS2-010 synthetic checks have
+executable evidence. They do not constitute final plant, controller,
+robustness, supervisor, middleware timing, or safety acceptance. The
+MODEL-020 preflight audit, SIM-010, and ROS2-010 preserve coefficient freeze
+and fixed-point readiness on hold. ROS2-010 executes a Jazzy runtime in a
+local container; native Raspberry Pi ROS 2, GPIO, RTL, platform timing,
+physical hardware, safety, and HIL tests remain unexecuted.
 
 ## 2. Test configuration
 
@@ -19,7 +20,7 @@ Complete for each released test campaign:
 | Repository commit | TBD |
 | Test date / operator / reviewer | TBD |
 | Raspberry Pi hardware and OS image | TBD |
-| ROS 2 distribution and package versions | TBD |
+| ROS 2 distribution and package versions | Jazzy container validation; exact package versions recorded by the pinned image/apt transaction |
 | Basys 3 board revision and FPGA part | TBD |
 | Vivado version / bitstream identifier | TBD |
 | Motor / encoder / driver / load | TBD |
@@ -48,7 +49,7 @@ Complete for each released test campaign:
 | INT-001 | UART/SPI loopback | Repeatable transactions at selected rates | Not run |
 | INT-002 | Protocol fault injection | Corrupt/stale/repeated packets rejected and reported | Not run |
 | INT-003 | Dedicated control signals | ARM and IRQ/FAULT directions and safe defaults verified | Not run |
-| INT-010 | ROS 2 node and interface test | Required nodes, topics, parameters, commands, telemetry, and fault interfaces operate coherently | Not run |
+| INT-010 | ROS 2 node and interface test | Required nodes, topics, parameters, commands, telemetry, faults, restart, and reset operate coherently | Development pass — ROS2-010 synthetic Jazzy container only |
 | INT-020 | Integrated FPGA control path | Observer, controller, PWM, telemetry, and faults operate coherently | Not run |
 | INT-021 | Atomic telemetry | Snapshot values are stable and sample counter is monotonic | Not run |
 | SYN-001 | Vivado implementation | Required timing closes; constraints complete; usage recorded | Not run |
@@ -275,3 +276,73 @@ or RTL verification.
 **Pre-fixed-point gate:** coefficient freeze and fixed-point conversion remain
 on hold. SIM-010 adds no fixed-point coefficients, binary points, word
 lengths, arithmetic policies, or RTL.
+
+## 9. ROS2-010-SYNTHETIC development record
+
+**Objective:** integrate typed ROS 2 Jazzy middleware around the authoritative
+SIM-010 supervisor without duplicating its safety state machine or introducing
+hardware access.
+
+**Mapped requirements:** SW-005, SW-007, COM-003 development portion,
+SAF-009, SAF-010, VER-006, and VER-007.
+
+**Method:** create one custom interface package and two ament Python packages;
+validate publisher-owned sequences and per-tick freshness; map accepted frames
+to `SupervisorInputs`; call `SupervisorTestBench`; publish typed actuator,
+safety, supervisor, and fault telemetry; implement an explicit reset service;
+run a deterministic synthetic telemetry/fault node; execute independent unit
+and real multi-process launch tests; regenerate exact JSON/CSV evidence.
+
+**Local Windows result:** the original preflight baseline passed with 73
+tests. After implementation, all 94 repository Python tests passed under
+Python 3.13.1. `compileall` and `git diff --check` passed. Native `ros2`,
+`colcon`, and `rclpy` were unavailable.
+
+**Local container result:** a locally built image based on the digest-pinned
+official `ros:jazzy-ros-base-noble` image ran under Docker Desktop 4.43.2 /
+Engine 28.3.2. Python 3.12.3 ran all 94 repository tests. `colcon build`
+completed for all three packages. Six distinct ROS-native lint checks passed:
+interface `lint_cmake`/`xmllint`, supervisor `ament_flake8`/`ament_pep257`,
+and simulator `ament_flake8`/`ament_pep257`. `colcon test` ran those checks
+and both launch tests; `colcon test-result --verbose` reported 10 tests, 0
+errors, 0 failures, and 0 skips. Explicit lint and launch-test replays also
+passed. The evidence generator reported 13 scenarios, 98 traces, 6 passing
+top-level checks, exact replay, and byte-equal regeneration.
+
+Launch coverage includes:
+
+- safe startup, a complete disarmed `READY` sample, and running;
+- finite voltage clipping without a fault;
+- software E-stop, malformed/non-finite command, heartbeat timeout, duplicate
+  and out-of-order encoder data, encoder failure, relay feedback failure, and
+  undervoltage;
+- fault latching, unsafe reset rejection, accepted reset, and controlled
+  recovery after every injected fault;
+- simultaneous encoder/safety telemetry disappearance; and
+- supervisor process exit/respawn with sample-index reset and safe actuator
+  output.
+
+Evidence:
+
+- `ros2_ws/src/robot_supervisor_interfaces/`
+- `ros2_ws/src/robot_supervisor/`
+- `ros2_ws/src/robot_supervisor_sim/`
+- `tests/test_ros2_010_core.py`
+- `tests/test_ros2_010_evidence.py`
+- `data/processed/ros2_010_synthetic_validation_report.json`
+- `data/processed/ros2_010_synthetic_message_trace.csv`
+- `docs/ros2_010_middleware_integration.md`
+
+**GitHub Actions status:** `.github/workflows/ros2-tests.yml` contains the
+same digest-pinned Jazzy build/test/evidence route. It was not run because
+this implementation remained uncommitted and unpushed as required.
+
+**Acceptance limitation:** the ROS E-stop is only a software test topic.
+Reliable/transient-local QoS, a safe shutdown publication, and a synthetic
+actuator consumer do not prove physical power removal or bounded disable
+latency. No Raspberry Pi timing, GPIO, physical encoder, relay, supply,
+watchdog, motor, E-stop, FPGA, HIL, fixed-point, or RTL result is claimed.
+
+**Pre-fixed-point gate:** coefficient freeze and fixed-point conversion remain
+on hold. ROS2-010 adds no coefficients, binary points, word lengths, arithmetic
+policy, or RTL.

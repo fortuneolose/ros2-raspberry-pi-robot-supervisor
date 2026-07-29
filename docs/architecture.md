@@ -212,3 +212,59 @@ explicitly synthetic in
 time, threshold, component rating, or safety claim. The implementation and
 limitations are detailed in
 [the SIM-010 baseline](sim_010_software_in_loop.md).
+
+## 11. ROS2-010 middleware architecture
+
+ROS2-010 adds a hardware-independent ROS 2 Jazzy transport layer without
+moving safety authority out of SIM-010:
+
+```text
+SupervisorCommand ───────────────┐
+EncoderTelemetry ────────────────┼─> ROS transport adapter
+SafetyInput ─────────────────────┘          |
+                                   SupervisorInputs
+                                            |
+                              models.sil.SupervisorTestBench
+                                            |
+                                  TelemetryRecord
+                           ┌────────┬────────┴────────┐
+                           v        v                 v
+                    ActuatorCommand status       fault telemetry
+                           |
+                     synthetic consumer
+```
+
+`robot_supervisor_interfaces` owns the custom message/service schema,
+`robot_supervisor` owns transport validation and node publication, and
+`robot_supervisor_sim` owns only synthetic input production, actuator
+consumption, and deterministic fault injection. The simulator does not
+contain a safety state machine.
+
+Input publishers own monotonic `uint64` sequences. A strictly newer sample is
+accepted once; a duplicate is reported and supplies no liveness evidence; an
+out-of-order sample is rejected and mapped to a deterministic invalid-input
+fault. After first encoder and safety contact, missing accepted encoder
+advancement and missing fresh heartbeat samples drive SIM-010's existing
+sample counters. Before first contact, the transport layer repeatedly
+publishes a safe actuator output and does not advance SIM-010, so DDS discovery
+cannot create false encoder-liveness evidence or an automatic transition to
+`READY`.
+
+Reset is a service, not a topic bit. The service executes a serialized
+SIM-010 tick and returns the authoritative accepted/rejected result and reason.
+No normal launch enables automatic process restart or automatic fault
+recovery. A dedicated launch test uses ROS launch `respawn` solely to verify
+that a restarted supervisor begins with safe output and fresh liveness state.
+
+Reliable volatile QoS with depth 10 is used for command and required telemetry
+streams. Reliable transient-local QoS with depth 1 is used for actuator and
+diagnostic outputs so a synthetic late-joining consumer receives the latest
+sample without replaying a command backlog. QoS is not physical safety
+authority.
+
+The default 20 ms supervisor timer and 10 ms simulator timer are explicitly
+synthetic middleware-test values. One qualified timer callback advances one
+SIM-010 sample; no real-time, DDS-latency, or physical disable-time claim is
+made. The complete graph, interface ownership, QoS rationale, and telemetry
+age semantics are specified in
+[the ROS2-010 integration record](ros2_010_middleware_integration.md).

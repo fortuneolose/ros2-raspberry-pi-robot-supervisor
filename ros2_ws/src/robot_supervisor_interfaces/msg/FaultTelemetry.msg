@@ -1,0 +1,9 @@
+builtin_interfaces/Time stamp
+uint64 sample_index
+string[] detected_faults
+string[] latched_faults
+string[] active_raw_fault_sources
+string[] input_diagnostics
+bool reset_accepted
+bool reset_rejected
+string reset_reason
